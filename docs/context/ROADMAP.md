@@ -1,6 +1,6 @@
 # ROADMAP — Build Phases
 
-**Current phase: 6**
+**Current phase: done** (all phases complete)
 
 Rules:
 - Do **only** the current phase. Each phase = one session.
@@ -53,10 +53,10 @@ Note: Stack (2×2 group cards, all badges), Contact card (rows: icon · display 
 **Done when:** with reduced motion on, nothing moves and the status dot doesn't pulse · adding one test entry to `site.ts` shows the section and nav link (remove it afterwards).
 Note: framer-motion entrance via shared `lib/motion.ts` (`reveal`/`revealItem`) on section headers, Work/Stack lists, Contact card, Experience; Hero static; `MotionConfig reducedMotion="user"` + `<noscript>` fallback in layout; Card cursor glow (CSS `::before` + one `CardGlow` listener); Experience timeline. Verified reduced motion with `--force-prefers-reduced-motion`. No TODOs.
 
-## [ ] Phase 6 — Polish & ship
+## [x] Phase 6 — Polish & ship
 - Metadata from `CONTEXT.md §SEO`, favicon, 404 page.
 - If Playwright is available: screenshots at 375 / 768 / 1440 into `.screenshots/` and review them.
 - Deploy to Vercel, then put the URL into `CONTEXT.md` (Site URL).
 
 **Done when:** all of `CLAUDE.md §5` passes on the deployed site.
-Note:
+Note: metadataBase + canonical + Open Graph (no image), generated CN favicon (`icon.tsx`), 404 page (`ui.notFound`), README, removed unused class-variance-authority; Site URL https://mark-e-port.vercel.app. §5 verified on production. TODO: OG image (CONTEXT §SEO); `npm audit` highs come via the `shadcn` CLI package only.
