@@ -1,10 +1,10 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-const TICKS = Array.from({ length: 41 }, (_, i) => i); // every 2.5%: long every 25%, medium every 12.5%; labelled every 5%
+const TICKS = Array.from({ length: 101 }, (_, i) => i); // every 1%; long and labelled every 5%
 
 // Rolling digits: each column slides to its digit, 280ms odometer ease (instant under reduced motion).
 export function Odometer({ digits }: { digits: string }) {
@@ -26,44 +26,60 @@ export function Odometer({ digits }: { digits: string }) {
   );
 }
 
-// DESIGN.MD §6 scroll ruler (lg+): a full-height track in its own lane at the viewport's right edge (the
-// section index rides just left of it). Right to left: milestone labels every 5%, the spine, ticks. The
-// --accent indicator and its 000–100% readout ride the track together at the scroll progress
-// (translateY, 1:1 with scroll); the readout's opaque backing hides the label it passes. Decorative.
-export function ScrollRuler() {
-  const { scrollYProgress } = useScroll();
-  const at = useTransform(scrollYProgress, (p) => `${p * 100}%`); // of the track height
+// DESIGN.MD §6 scroll ruler (lg+), in its own lane at the viewport's right edge: a measuring tape that
+// scrolls with the page. Its 0–100% span is exactly the page's scroll distance, laid out from the
+// indicator down, so it moves 1:1 with the content (translateY = -scrollY) and the tick under the fixed
+// --accent indicator (level with the docked title, `at` rem from the top) is always the current
+// progress, which the readout beneath it shows. Decorative.
+export function ScrollRuler({ at }: { at: number }) {
+  const { scrollY, scrollYProgress } = useScroll();
+  const tape = useTransform(scrollY, (y) => -y);
   const [percent, setPercent] = useState(0);
+  const [length, setLength] = useState(0);
   useMotionValueEvent(scrollYProgress, "change", (p) => setPercent(Math.round(p * 100)));
 
+  useEffect(() => {
+    const measure = () => setLength(document.documentElement.scrollHeight - window.innerHeight);
+    measure();
+    const resize = new ResizeObserver(measure);
+    resize.observe(document.body);
+    window.addEventListener("resize", measure);
+    return () => {
+      resize.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-y-6 right-2 z-30 hidden w-10 lg:block">
-      <span className="absolute inset-y-0 right-7 w-0.5 bg-border-strong" />
-      <motion.span className="absolute inset-y-0 right-7 w-0.5 origin-top bg-accent" style={{ scaleY: scrollYProgress }} />
-      {TICKS.map((i) => (
-        <Fragment key={i}>
-          <span
-            className={`absolute right-7 -translate-y-1/2 ${i % 10 ? (i % 5 ? "h-px w-1.5 bg-text-subtle" : "h-px w-2 bg-text-muted") : "h-0.5 w-3 bg-text-muted"}`}
-            style={{ top: `${i * 2.5}%` }}
-          />
-          {i % 2 === 0 && (
+    <div aria-hidden className="pointer-events-none fixed inset-y-0 right-2 z-30 hidden w-12 overflow-hidden lg:block">
+      <span className="absolute inset-y-0 right-0 w-px bg-border-strong" />
+      <motion.div
+        className="absolute inset-x-0 will-change-transform"
+        style={{ top: `${at}rem`, height: length, y: tape }}
+      >
+        {TICKS.map((i) => (
+          <Fragment key={i}>
             <span
-              className="absolute right-0 -translate-y-1/2 font-mono text-2xs text-text-muted"
-              style={{ top: `${i * 2.5}%` }}
-            >
-              {String(i * 2.5).padStart(2, "0")}
-            </span>
-          )}
-        </Fragment>
-      ))}
-      <motion.div className="absolute inset-0" style={{ y: at }}>
-        <div className="absolute top-0 right-0 flex -translate-y-1/2 items-center gap-1">
-          <span className="h-0.5 w-3.5 bg-accent shadow-glow" />
-          <span className="flex bg-bg py-1.5 font-mono text-2xs text-accent">
-            <Odometer digits={String(percent).padStart(3, "0")} />%
-          </span>
-        </div>
+              className={`absolute right-0 h-px -translate-y-1/2 ${i % 5 ? "w-2 bg-text-subtle" : "w-4 bg-text-muted"}`}
+              style={{ top: `${i}%` }}
+            />
+            {i % 5 === 0 && i > 0 && (
+              <span
+                className="absolute right-5 -translate-y-1/2 font-mono text-2xs text-text-muted"
+                style={{ top: `${i}%` }}
+              >
+                {i}
+              </span>
+            )}
+          </Fragment>
+        ))}
       </motion.div>
+      <div className="absolute right-0 flex flex-col items-end" style={{ top: `${at}rem` }}>
+        <span className="h-0.5 w-12 -translate-y-1/2 bg-accent shadow-glow" />
+        <span className="flex bg-bg pt-1 pb-0.5 font-mono text-2xs text-accent">
+          <Odometer digits={String(percent).padStart(3, "0")} />%
+        </span>
+      </div>
     </div>
   );
 }

@@ -275,7 +275,7 @@ export function SectionIndex() {
 
   return (
     <>
-      <ScrollRuler />
+      <ScrollRuler at={DOCK_TOP + BIG / 2} />
       <div ref={root} className="pointer-events-none fixed inset-y-0 right-14 z-30 hidden lg:block">
         {/* The docked section's eyebrow number, rolling like an odometer. Decorative: the titles are the links. */}
         <p
