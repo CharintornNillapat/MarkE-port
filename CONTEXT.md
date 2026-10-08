@@ -49,7 +49,7 @@ Computer Engineering graduate who builds full-stack web applications and applied
 
 ## Projects
 
-Listed in display order. `featured: yes` → large bento card. `highlight` = one engineering fact shown as a callout on the card.
+Listed in display order. `featured: yes` → large bento card. `highlight` = one engineering fact shown as a callout on the card. Cards show the first 5 **Stack** items as badges, so list the most relevant first.
 
 ### 1. FinLife Tracker
 - **Category:** Full-Stack PWA · Personal Finance
@@ -57,7 +57,7 @@ Listed in display order. `featured: yes` → large bento card. `highlight` = one
 - **One-liner:** Offline-first finance tracker with a daily diary, synced to Supabase.
 - **Description:** Installable PWA for wallets, income, spending and debt goals in Thai Baht, with a daily diary of mood, workouts and meals beside each day's spending. Works offline on localStorage; signed in, it syncs both ways with Supabase and every ledger change runs as one atomic Postgres function. An AI classifier suggests categories through a server-side proxy.
 - **Highlight:** 1,000+ unit tests and 150+ Playwright tests across Chromium, Firefox and WebKit
-- **Stack:** React 19, TypeScript, Vite, Tailwind CSS v4, Supabase, Zod, Playwright, Vitest, Vercel
+- **Stack:** React 19, TypeScript, Supabase, Playwright, Vitest, Vite, Tailwind CSS v4, Zod, Vercel
 - **Repo:** https://github.com/CharintornNillapat/IncomeAndExpence
 - **Demo:** https://income-and-expence-neon.vercel.app
 

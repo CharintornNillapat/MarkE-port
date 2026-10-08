@@ -57,6 +57,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 | H3 (card title) | `text-lg font-medium` |
 | Eyebrow (section label) | mono `text-xs uppercase tracking-widest text-[--text-muted]` — format `01 / WORK` |
 | Body | `text-base sm:text-lg leading-relaxed text-[--text-muted] max-w-prose` |
+| Card body (one-liner, description) | `text-sm leading-relaxed text-[--text-muted]` |
 | Meta / badge | mono `text-xs` |
 
 ## 4. Components

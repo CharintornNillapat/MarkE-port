@@ -1,6 +1,6 @@
 # ROADMAP — Build Phases
 
-**Current phase: 3**
+**Current phase: 4**
 
 Rules:
 - Do **only** the current phase. Each phase = one session.
@@ -34,11 +34,11 @@ Note: Section, Navbar (+ NavLinks active-section highlight), MobileMenu (Radix D
 **Done when:** one `<h1>` on the page · CTAs go to `#work` and GitHub · readable at 375px with no overflow.
 Note: Button (link, auto new-tab for external), StatusPill (motion-safe pulse), Hero with glow + masked 48px grid; added name · role line above H1 (DESIGN §5 + CONTEXT §Hero updated); Navbar CTA now uses Button. No TODOs.
 
-## [ ] Phase 3 — Work (bento)
+## [x] Phase 3 — Work (bento)
 - `Card`, `Badge`, project card with highlight callout and Live/Code links; grid spans per `DESIGN.MD §5`.
 
 **Done when:** spans match the table at `lg`, 2 cols at `md`, 1 col on mobile · no link rendered for `—`/`TODO` · all 4 projects shown in CONTEXT order.
-Note:
+Note: Card (hover border), Badge, Work bento (`lgSpans` by position, secondary-Button links with sr-only titles, first 5 stack badges); DESIGN §3 "Card body" added; FinLife stack reordered in CONTEXT + site.ts. TODO: no project images yet; Contact never becomes the active nav link until Stack/Contact have content (Phase 4).
 
 ## [ ] Phase 4 — Stack + Contact
 - Stack: 4 group cards. Contact: rows for email and GitHub with `CopyButton`.
