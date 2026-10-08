@@ -103,7 +103,7 @@
   opacity: 0.04;
 }
 
-/* Registered so CSS can interpolate them: the spotlight glides after the pointer, the beam turns. */
+/* Registered so CSS can interpolate them: the spotlight glides after the pointer. */
 @property --mouse-x {
   syntax: "<length-percentage>";
   inherits: true;
@@ -113,11 +113,6 @@
   syntax: "<length-percentage>";
   inherits: true;
   initial-value: 50%;
-}
-@property --beam-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
 }
 
 /* DESIGN.MD §4 card spotlight, two layers following --mouse-x/--mouse-y (written by CardGlow):
@@ -165,6 +160,8 @@
 }
 
 /* DESIGN.MD §6 border beam: a short --accent arc travelling round the border (StatusPill, featured cards).
+   The ring mask is static; inside it a square conic-gradient layer (side = the element's diagonal, so it
+   covers the ring at any angle) is turned with transform, which the compositor animates without a repaint.
    Rendered only when motion is allowed; the static border stays either way. */
 .border-beam {
   display: none;
@@ -178,18 +175,31 @@
     padding: 1px;
     border-radius: inherit;
     pointer-events: none;
-    background: conic-gradient(from var(--beam-angle), transparent 0 300deg, var(--accent) 360deg);
+    container-type: size;
+    overflow: clip; /* the turning square is larger than the ring; the mask hides it but doesn't stop page overflow */
     mask:
       linear-gradient(black 0 0) content-box,
       linear-gradient(black 0 0);
     mask-composite: exclude;
+  }
+
+  .border-beam::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: hypot(100cqw + 2px, 100cqh + 2px); /* cq units measure the content box; + the 1px ring each side */
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: conic-gradient(transparent 0 300deg, var(--accent) 360deg);
+    will-change: transform;
     animation: border-beam 6s linear infinite;
   }
 }
 
 @keyframes border-beam {
   to {
-    --beam-angle: 360deg;
+    transform: rotate(360deg);
   }
 }
 

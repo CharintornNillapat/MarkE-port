@@ -45,3 +45,6 @@ next-env.d.ts
 
 # local reference notes on third-party sites (never committed)
 .ref-snapshots/
+
+# written by `next dev` for coding agents
+AGENTS.md

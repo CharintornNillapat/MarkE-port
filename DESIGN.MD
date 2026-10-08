@@ -121,7 +121,7 @@ Crafted, but never in the way of reading. Every effect below uses `--accent` / `
 - **Hero constellation (WebGL, three.js):** 140 points (70 below 768px), each joined to ≤ 3 neighbours closer than a fixed radius; points round, `--accent` at 70%, lines `--accent` at 15%, read from the CSS token at runtime. The field sways ±6° on a 40s loop and the camera drifts on a 30s loop; with a mouse (never touch), the camera eases toward the pointer (≈ 0.4s, up to ≈ 3.4°). Fades in over 600ms once loaded and shares the aurora's bottom fade. Budget: geometry built once (no per-frame allocation), device pixel ratio ≤ 2, ≤ 60fps, paused while the hero is off screen. three.js is `import()`ed after hydration, so it never blocks first paint; under reduced motion it is not fetched, and turning reduced motion on tears the scene down (WebGL context released).
 - **Ambient loops** (the only motion allowed past 600ms, all `transform`/paint, never layout):
   - Aurora — three `--glow` orbs (576px) in the Hero, `ease-in-out infinite alternate` drifts of 18s / 22s / 25s.
-  - Border beam — a 60° `--accent` arc travelling round the border of the StatusPill and featured cards, 6s linear.
+  - Border beam — a 60° `--accent` arc travelling round the border of the StatusPill and featured cards, 6s linear. A static conic-gradient square (side = the element's diagonal) is turned with `transform: rotate` inside a fixed 1px ring mask, so the compositor animates it with no per-frame repaint.
   - Status dot pulse — 2s, opacity only.
   - Constellation camera drift 30s and field sway 40s (see Hero constellation).
 - **Grain:** static grayscale SVG noise (`feTurbulence`, 200px tile) over the whole page at 4% opacity, `pointer-events: none`. Not motion, so it stays on.
