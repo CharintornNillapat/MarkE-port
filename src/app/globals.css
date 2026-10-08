@@ -51,6 +51,30 @@
   mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 30%, transparent);
 }
 
+/* DESIGN.MD §4 card hover glow: --glow radial centred on the pointer (CardGlow sets --glow-x/--glow-y).
+   Precise pointers with hover only, and off for reduced motion. Sits behind the content via Card's `isolate`. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-glow]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      circle --spacing(80) at var(--glow-x, 50%) var(--glow-y, 50%),
+      var(--glow),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+
+  [data-glow]:hover::before {
+    opacity: 1;
+  }
+}
+
 @layer base {
   /* DESIGN.MD §4 focus ring, applied to every interactive element. */
   :focus-visible {

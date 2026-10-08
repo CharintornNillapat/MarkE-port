@@ -3,15 +3,18 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { Section } from "@/components/layout/Section";
 import { Contact } from "@/components/sections/Contact";
+import { Experience } from "@/components/sections/Experience";
 import { Hero } from "@/components/sections/Hero";
 import { Stack } from "@/components/sections/Stack";
 import { Work } from "@/components/sections/Work";
+import { CardGlow } from "@/components/ui/CardGlow";
 import { visibleSections, type Section as SectionData } from "@/content/site";
 
 export default function Home() {
   // Section bodies by id; a section without one still renders its eyebrow and heading.
   const content: Partial<Record<SectionData["id"], ReactNode>> = {
     work: <Work />,
+    experience: <Experience />,
     stack: <Stack />,
     contact: <Contact />,
   };
@@ -28,6 +31,7 @@ export default function Home() {
         ))}
       </main>
       <Footer />
+      <CardGlow />
     </>
   );
 }

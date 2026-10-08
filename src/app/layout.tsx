@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MotionConfig } from "framer-motion";
 import { Geist, Geist_Mono, Noto_Sans_Thai } from "next/font/google";
 import { seo } from "@/content/site";
 import "./globals.css";
@@ -31,7 +32,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${notoSansThai.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-bg font-sans text-text">{children}</body>
+      <body className="min-h-full flex flex-col bg-bg font-sans text-text">
+        {/* Entrance items render hidden until framer-motion runs; without JS they'd stay hidden. */}
+        <noscript>
+          <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
+        </noscript>
+        {/* DESIGN.MD §6: with reduced motion, framer skips transforms and keeps only the fade. */}
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </body>
     </html>
   );
 }

@@ -1,9 +1,11 @@
+import * as motion from "framer-motion/client";
 import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { GithubIcon } from "@/components/ui/icons";
 import { projects, ui, type Project } from "@/content/site";
+import { reveal, revealItem } from "@/lib/motion";
 
 // DESIGN.MD §5 lg spans, by position. When projects are added or removed, update this list and the
 // DESIGN table together: every row sums to 6 and featured cards span at least 3.
@@ -11,13 +13,13 @@ const lgSpans = ["lg:col-span-3", "lg:col-span-3", "lg:col-span-4", "lg:col-span
 
 export function Work() {
   return (
-    <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+    <motion.ul {...reveal} className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
       {projects.map((project, i) => (
-        <li key={project.title} className={lgSpans[i]}>
+        <motion.li {...revealItem} key={project.title} className={lgSpans[i]}>
           <ProjectCard project={project} />
-        </li>
+        </motion.li>
       ))}
-    </ul>
+    </motion.ul>
   );
 }
 

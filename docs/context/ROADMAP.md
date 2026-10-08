@@ -1,6 +1,6 @@
 # ROADMAP — Build Phases
 
-**Current phase: 5**
+**Current phase: 6**
 
 Rules:
 - Do **only** the current phase. Each phase = one session.
@@ -46,12 +46,12 @@ Note: Card (hover border), Badge, Work bento (`lgSpans` by position, secondary-B
 **Done when:** copy works and announces "Copied" · no phone number anywhere · LinkedIn row hidden while `TODO`.
 Note: Stack (2×2 group cards, all badges), Contact card (rows: icon · display · CopyButton · Open link with sr-only channel), CopyButton (Check + "Copied" only after a successful write, 2s reset); `buttonClass` exported from Button. Contact now becomes the active nav link at page bottom (Phase 1 TODO closed). TODO: real-clipboard paste checked manually only (headless denies clipboard permission).
 
-## [ ] Phase 5 — Experience + motion
+## [x] Phase 5 — Experience + motion
 - `Experience` timeline component (still hidden while empty).
 - Entrance and hover motion per `DESIGN.MD §6`, card cursor glow.
 
 **Done when:** with reduced motion on, nothing moves and the status dot doesn't pulse · adding one test entry to `site.ts` shows the section and nav link (remove it afterwards).
-Note:
+Note: framer-motion entrance via shared `lib/motion.ts` (`reveal`/`revealItem`) on section headers, Work/Stack lists, Contact card, Experience; Hero static; `MotionConfig reducedMotion="user"` + `<noscript>` fallback in layout; Card cursor glow (CSS `::before` + one `CardGlow` listener); Experience timeline. Verified reduced motion with `--force-prefers-reduced-motion`. No TODOs.
 
 ## [ ] Phase 6 — Polish & ship
 - Metadata from `CONTEXT.md §SEO`, favicon, 404 page.
