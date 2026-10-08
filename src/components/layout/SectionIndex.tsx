@@ -13,15 +13,16 @@ import {
   type MotionStyle,
   type MotionValue,
 } from "framer-motion";
-import { ScrollRuler } from "@/components/layout/ScrollRuler";
+import { Odometer, ScrollRuler } from "@/components/layout/ScrollRuler";
 import { visibleSections } from "@/content/site";
 
 // DESIGN.MD §6 section index (lg+), in the tracker gutter the page containers keep free (pr-tracker),
-// everything right-aligned on the right-6 line.
+// everything right-aligned on the right-12 line, just left of the full-height ScrollRuler lane.
 // Titles are set at text-4xl/none bold (2.25rem): full size when docked beneath the
 // navbar, 0.5 on the rail, 1/3 (= 12px) in the stacks. Layout in rem, top to bottom: passed stack →
-// docked title → odometer → rail → upcoming stack.
+// docked title → section number → rail → upcoming stack.
 const n = visibleSections.length;
+const LINE = 3; // right-12: 1rem clear of the ruler lane (right-2, w-6)
 const EDGE = 1.5; // top-6 / bottom-6
 const ROW = 1.5; // stack pitch: a 12px title + 12px gap (24px apart, WCAG 2.5.8)
 const HALF = 0.375; // centre of a 12px stacked title
@@ -29,10 +30,9 @@ const BIG = 2.25; // text-4xl/none line box
 const ODOMETER = 1.125; // text-lg/none
 const GAP = 0.75;
 const DOCK_TOP = EDGE + (n - 1) * ROW + GAP; // below the longest passed stack, so also below the navbar
-const RULER_TOP = DOCK_TOP + BIG + GAP;
-const RAIL_TOP = RULER_TOP + ODOMETER + GAP;
+const NUMBER_TOP = DOCK_TOP + BIG + GAP;
+const RAIL_TOP = NUMBER_TOP + ODOMETER + GAP;
 const RAIL_BOTTOM = EDGE + n * ROW; // from the viewport bottom: above the upcoming stack
-const TRACK = 1.5; // the ruler's 1rem tick track + 0.5rem gap
 const SMALL = 1 / 3; // stacked titles, unless the margin is too narrow for that (then smaller)
 const RIDE = 0.5;
 const LIFT = 4; // scroll (rem) for leaving the stack and turning onto the rail
@@ -72,6 +72,14 @@ function keepClear(pose: Pose, i: number, g: Geometry): Pose {
   return x < limit ? [limit, pose[1], rotate, scale, pose[4]] : pose;
 }
 
+// Nor past the titles' line into the ruler lane: a turning title's line box swings right of its anchor by
+// scale · (line / 2) · |sin r|, so hold the anchor that far left (upright on the rail that is exactly
+// where it rides).
+function keepRight(pose: Pose, g: Geometry): Pose {
+  const limit = -pose[3] * (g.line / 2) * Math.abs(Math.sin((pose[2] * Math.PI) / 180));
+  return pose[0] > limit ? [limit, pose[1], pose[2], pose[3], pose[4]] : pose;
+}
+
 // Cubic ease in-out over a 0–1 progress, clamped.
 const ease = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 // Into the dock: a long soft settle (the 0.25, 1, 0.5, 1 curve) with no abrupt stop. That curve starts at
@@ -86,10 +94,10 @@ const dockedIndex = (y: number, g: Geometry) => g.tops.filter((_, i) => y >= doc
 
 const rest = (i: number, g: Geometry): Pose => [0, g.height - g.rem * (EDGE + (n - 1 - i) * ROW + HALF), 0, g.small, 0];
 const passed = (i: number, g: Geometry): Pose => [0, g.rem * (EDGE + i * ROW + HALF), 0, g.small, 0];
-// On the rail, upright: its foot (first letter) at y, so the word hangs above y and never over the
-// waiting stack below the rail.
+// On the rail, upright beside the ruler: its foot (first letter) at y, so the word hangs above y and
+// never over the waiting stack below the rail.
 const onRail = (y: number, i: number, g: Geometry): Pose => [
-  -g.rem * (TRACK + (BIG * RIDE) / 2),
+  (-g.rem * BIG * RIDE) / 2,
   y - g.widths[i] * RIDE,
   -90,
   RIDE,
@@ -118,8 +126,9 @@ function flight(i: number, y: number, lag: number, g: Geometry): Pose {
   const docking = arrive((dock - left) / dock);
   const retiring = i < n - 1 ? ease((dock - fold(dockAt(i + 1, g) - y, lag, dock)) / dock) : 0;
   const pose = mix(mix(lifted, docked(g), docking), passed(i, g), retiring);
-  // The docked title is the one thing allowed over the content column (beneath the navbar, like it).
-  return mix(keepClear(pose, i, g), pose, docking * (1 - retiring));
+  // The docked title is the one thing allowed over the content column (beneath the navbar, like it), so
+  // where the two limits clash (only while a title turns into or out of the dock) the ruler lane wins.
+  return keepRight(mix(keepClear(pose, i, g), pose, docking * (1 - retiring)), g);
 }
 
 // Reduced motion: no flight, each title simply sits in its state.
@@ -233,7 +242,7 @@ export function SectionIndex() {
         : Infinity;
       const titles = [...(root.current?.querySelectorAll("a") ?? [])];
       const widths = titles.map((a) => a.offsetWidth);
-      const margin = document.documentElement.clientWidth - rem * EDGE - contentRight;
+      const margin = document.documentElement.clientWidth - rem * LINE - contentRight;
       const g: Geometry = {
         rem,
         height: window.innerHeight,
@@ -252,7 +261,7 @@ export function SectionIndex() {
       setCurrent(dockedIndex(window.scrollY, g));
     };
     measure();
-    document.fonts.ready.then(measure); // title widths change once the display face loads
+    document.fonts.ready.then(measure); // title widths change once the font loads
     const resize = new ResizeObserver(measure);
     resize.observe(document.body);
     window.addEventListener("resize", measure);
@@ -263,23 +272,30 @@ export function SectionIndex() {
   }, [geometry]);
 
   return (
-    <div ref={root} className="pointer-events-none fixed inset-y-0 right-6 z-30 hidden lg:block">
-      <ScrollRuler
-        number={current >= 0 ? current + 1 : undefined}
-        style={{ top: `${RULER_TOP}rem`, bottom: `${RAIL_BOTTOM}rem` }}
-      />
-      {visibleSections.map(({ id, label }, i) => (
-        <Title
-          key={id}
-          i={i}
-          id={id}
-          label={label}
-          current={i === current}
-          scroll={scrollY}
-          geometry={geometry}
-          discrete={discrete}
-        />
-      ))}
-    </div>
+    <>
+      <ScrollRuler />
+      <div ref={root} className="pointer-events-none fixed inset-y-0 right-12 z-30 hidden lg:block">
+        {/* The docked section's eyebrow number, rolling like an odometer. Decorative: the titles are the links. */}
+        <p
+          aria-hidden
+          className={`absolute right-0 font-mono text-lg leading-none text-text transition-opacity duration-200 ${current >= 0 ? "opacity-100" : "opacity-0"}`}
+          style={{ top: `${NUMBER_TOP}rem` }}
+        >
+          <Odometer digits={String(Math.max(current, 0) + 1).padStart(2, "0")} />
+        </p>
+        {visibleSections.map(({ id, label }, i) => (
+          <Title
+            key={id}
+            i={i}
+            id={id}
+            label={label}
+            current={i === current}
+            scroll={scrollY}
+            geometry={geometry}
+            discrete={discrete}
+          />
+        ))}
+      </div>
+    </>
   );
 }
