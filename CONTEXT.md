@@ -127,17 +127,21 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.sections` · experience | Experience | Navbar link · eyebrow — hidden while Experience is empty |
 | `ui.sections` · stack | Stack | Navbar link · eyebrow |
 | `ui.sections` · contact | Contact | Navbar link · eyebrow |
-| `ui.sections[].heading` | TODO | Section H2 heading (one per section) |
+| `ui.sections` · work · heading | Selected Work & Engineering Projects | Section H2 |
+| `ui.sections` · experience · heading | Work Experience | Section H2 — hidden while Experience is empty |
+| `ui.sections` · stack · heading | Technical Capabilities & Stack | Section H2 |
+| `ui.sections` · contact · heading | Get in Touch | Section H2 |
 | `ui.nav.cta` | Get in Touch → `#contact` | Navbar primary button |
-| `ui.nav.menu` | Menu | Mobile menu button label |
+| `ui.nav.menu` | Menu | Mobile menu button label · drawer title |
+| `ui.nav.close` | Close menu | Mobile drawer close button label |
 | `ui.project.demo` | Live | Project card link (demo) |
 | `ui.project.repo` | Code | Project card link (repo) |
 | `ui.copy.email` | Copy email | CopyButton `aria-label`, email row |
-| `ui.copy.github` | TODO | CopyButton `aria-label`, GitHub row |
+| `ui.copy.github` | Copy GitHub profile link | CopyButton `aria-label`, GitHub row |
 | `ui.copy.done` | Copied | CopyButton live announcement |
-| `ui.contact.heading` | TODO | Contact card heading |
-| `ui.contact.line` | TODO | Contact card short line |
-| `ui.contact.open` | TODO | Open-link button labels in contact rows |
+| `ui.contact.heading` | Let's Build Something Together | Contact card heading |
+| `ui.contact.line` | Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out. | Contact card short line |
+| `ui.contact.open` | Open link | Open-link button labels in contact rows |
 
 Eyebrow numbers count only the sections actually rendered. Footer reads `© {current year} {Name (EN)}` (no extra label).
 

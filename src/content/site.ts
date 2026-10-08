@@ -31,7 +31,7 @@ export type SkillGroup = { group: string; items: string[] };
 export type Section = {
   id: "work" | "experience" | "stack" | "contact";
   label: string;
-  heading?: string;
+  heading: string;
 };
 
 const GITHUB_URL = "https://github.com/CharintornNillapat";
@@ -176,21 +176,31 @@ export const seo = {
 };
 
 // DESIGN.MD §5 order. Eyebrow numbers (`01 / WORK`) are assigned to the sections actually rendered.
-// Section headings (H2): TODO in CONTEXT.md, so `heading` is left out.
 const sections: Section[] = [
-  { id: "work", label: "Work" },
-  { id: "experience", label: "Experience" },
-  { id: "stack", label: "Stack" },
-  { id: "contact", label: "Contact" },
+  { id: "work", label: "Work", heading: "Selected Work & Engineering Projects" },
+  { id: "experience", label: "Experience", heading: "Work Experience" },
+  { id: "stack", label: "Stack", heading: "Technical Capabilities & Stack" },
+  { id: "contact", label: "Contact", heading: "Get in Touch" },
 ];
 
-// CONTEXT.md §UI Labels. Contact heading/line, the GitHub copy label and open-link labels are TODO.
+// CONTEXT.md §UI Labels.
 export const ui = {
   nav: {
     cta: { label: "Get in Touch", href: "#contact" } satisfies Link,
     menu: "Menu",
+    close: "Close menu",
   },
   sections,
   project: { demo: "Live", repo: "Code" },
-  copy: { email: "Copy email", done: "Copied" },
+  copy: { email: "Copy email", github: "Copy GitHub profile link", done: "Copied" },
+  contact: {
+    heading: "Let's Build Something Together",
+    line: "Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out.",
+    open: "Open link",
+  },
 };
+
+// Sections that render (page + navbar). CONTEXT.md §Experience: hidden while the list is empty.
+export const visibleSections = sections.filter(
+  (s) => s.id !== "experience" || experience.length > 0,
+);

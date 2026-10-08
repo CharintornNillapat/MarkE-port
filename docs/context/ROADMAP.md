@@ -1,6 +1,6 @@
 # ROADMAP — Build Phases
 
-**Current phase: 1**
+**Current phase: 2**
 
 Rules:
 - Do **only** the current phase. Each phase = one session.
@@ -21,12 +21,12 @@ Scaffold and tokens only. No visible UI yet.
 **Done when:** `npm run build` passes · `page.tsx` renders the name and one line of muted text using tokens · no hex values outside `globals.css`.
 Note: Next 16.4 + Tailwind 4.3 + shadcn (radix) scaffold; DESIGN tokens with Tailwind's default palette disabled; Geist + Noto Sans Thai; `site.ts` incl. `ui` labels (added to CONTEXT §UI Labels); official GitHub mark in `ui/icons.tsx`. TODO in CONTEXT: section H2 headings, Contact heading/line, GitHub copy label, open-link labels.
 
-## [ ] Phase 1 — Layout shell
+## [x] Phase 1 — Layout shell
 - `Section` wrapper (id, eyebrow, heading, `aria-labelledby`), `Navbar` (desktop + mobile menu), `Footer`.
 - `page.tsx` composes all sections as empty `Section`s in `DESIGN.MD §5` order. Experience is skipped when empty, and eyebrow numbers adjust.
 
 **Done when:** anchor links scroll to each section · mobile menu opens/closes with keyboard and Esc · no Experience link while it's empty.
-Note:
+Note: Section, Navbar (+ NavLinks active-section highlight), MobileMenu (Radix Dialog drawer), Footer ("use cache" year); Experience hidden, eyebrows 01–03; global accent focus ring. TODO: Navbar CTA uses inline button classes until Phase 2 `Button`; recheck active-link highlight once sections have real height.
 
 ## [ ] Phase 2 — Hero
 - `StatusPill`, `Button` (primary/secondary), Hero with glow + grid background.
