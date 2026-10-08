@@ -37,6 +37,7 @@ const SMALL = 1 / 3; // stacked titles, unless the margin is too narrow for that
 const RIDE = 0.5;
 const LIFT = 4; // scroll (rem) for leaving the stack and turning onto the rail
 const DOCK = 8; // scroll (rem) for turning off the rail into the dock, and for the previous title to retire
+const WAKE = 8; // scroll (rem) from the top of the page over which a title already due on the rail lifts out
 // Letters peel off one by one: the m-th letter from the right trails the first by STAGGER · m^WAVE rem of
 // scroll, so each gap is a little wider than the last (a trailing wave).
 const STAGGER = 0.5;
@@ -85,22 +86,37 @@ const dockedIndex = (y: number, g: Geometry) => g.tops.filter((_, i) => y >= doc
 
 const rest = (i: number, g: Geometry): Pose => [0, g.height - g.rem * (EDGE + (n - 1 - i) * ROW + HALF), 0, g.small, 0];
 const passed = (i: number, g: Geometry): Pose => [0, g.rem * (EDGE + i * ROW + HALF), 0, g.small, 0];
-const onRail = (y: number, g: Geometry): Pose => [-g.rem * (TRACK + (BIG * RIDE) / 2), y, -90, RIDE, 0.6];
+// On the rail, upright: its foot (first letter) at y, so the word hangs above y and never over the
+// waiting stack below the rail.
+const onRail = (y: number, i: number, g: Geometry): Pose => [
+  -g.rem * (TRACK + (BIG * RIDE) / 2),
+  y - g.widths[i] * RIDE,
+  -90,
+  RIDE,
+  0.6,
+];
 const docked = (g: Geometry): Pose => [0, g.rem * (DOCK_TOP + BIG / 2), 0, 1, 1];
+// A letter's lag (px of scroll behind the leading letter) applies in full while its title waits and
+// rides, and folds smoothly to 0 over the last `dock` px, so every letter lands on the same scroll px
+// (even at the end of the page, which a trailing letter could otherwise never reach).
+const fold = (left: number, lag: number, dock: number) => left + lag * ease(left / dock);
 
-// Scrubbed 1:1 by scroll: stack → turns onto the rail and rides up it level with its section's top edge →
-// turns flat into the giant dock beneath the navbar → shrinks into the passed stack while the next docks.
-function flight(i: number, y: number, g: Geometry): Pose {
+// Scrubbed 1:1 by scroll: stack → turns onto the rail and rides up it, its foot level with its section's
+// top edge → turns flat into the giant dock beneath the navbar → shrinks into the passed stack while the
+// next docks.
+function flight(i: number, y: number, lag: number, g: Geometry): Pose {
   const railTop = g.rem * RAIL_TOP;
   const ride = g.height - g.rem * RAIL_BOTTOM - railTop;
   const lift = g.rem * LIFT;
   const dock = g.rem * DOCK;
-  const left = dockAt(i, g) - y; // scroll still to go before this title docks
+  const left = fold(dockAt(i, g) - y, lag, dock); // scroll still to go before this letter docks
   // Lifts toward a rail point that already moves with the scroll, so it joins the ride at scroll speed
-  // (no stop-and-go where lift and ride meet).
-  const lifted = mix(rest(i, g), onRail(railTop + Math.max(left, 0), g), ease((ride + lift - left) / lift));
+  // (no stop-and-go where lift and ride meet). Never before the page has been scrolled: on load every
+  // title waits in the stack, and one already due on the rail lifts out over the first WAKE rem.
+  const lifting = ease(Math.min((ride + lift - left) / lift, (y - lag) / (g.rem * WAKE)));
+  const lifted = mix(rest(i, g), onRail(railTop + Math.max(left, 0), i, g), lifting);
   const docking = arrive((dock - left) / dock);
-  const retiring = i < n - 1 ? ease((dock - (dockAt(i + 1, g) - y)) / dock) : 0;
+  const retiring = i < n - 1 ? ease((dock - fold(dockAt(i + 1, g) - y, lag, dock)) / dock) : 0;
   const pose = mix(mix(lifted, docked(g), docking), passed(i, g), retiring);
   // The docked title is the one thing allowed over the content column (beneath the navbar, like it).
   return mix(keepClear(pose, i, g), pose, docking * (1 - retiring));
@@ -119,21 +135,22 @@ type Props = {
   discrete: boolean;
 };
 
-// The title's pose, or a letter's: the title's pose `lead` rem further down the page. Reads both values on
-// every run: useTransform tracks the motion values read, so an early return before scroll.get() would
-// leave it deaf to scrolling.
-function read({ i, scroll, geometry, discrete }: Props, lead = 0) {
+// The pose of a letter running `lag` rem behind its title's leading letter. Reads both values on every
+// run: useTransform tracks the motion values read, so an early return before scroll.get() would leave it
+// deaf to scrolling.
+function read({ i, scroll, geometry, discrete }: Props, lag: number) {
   const y = scroll.get();
   const g = geometry.get();
-  return g && { g, pose: discrete ? snap(i, y, g) : flight(i, y + g.rem * lead, g) };
+  return g && { g, pose: discrete ? snap(i, y, g) : flight(i, y, g.rem * lag, g) };
 }
 
-// A letter flies on its own copy of the title's path, run ahead or behind by `lead`, expressed relative to
-// the title it sits in (whose transform it inherits). Every resting state leaves it untransformed.
-function Letter({ char, k, lead, ...props }: Props & { char: string; k: number; lead: number }) {
+// A letter flies on its own copy of the title's path, `lag` behind the leading letter, expressed relative
+// to the title it sits in (`mid`: the title moves with its average letter, whose transform it inherits).
+// Every resting state leaves it untransformed.
+function Letter({ char, k, lag, mid, ...props }: Props & { char: string; k: number; lag: number; mid: number }) {
   const transform = useTransform(() => {
-    const title = read(props);
-    const self = read(props, lead);
+    const title = read(props, mid);
+    const self = read(props, lag);
     if (!title || !self) return "none";
     const [x, y, r, s] = title.pose;
     const [xk, yk, rk, sk] = self.pose;
@@ -151,7 +168,7 @@ function Letter({ char, k, lead, ...props }: Props & { char: string; k: number; 
     return `translate3d(${ox + zoom * c * Math.cos(b) - c}px, ${oy + zoom * c * Math.sin(b)}px, 0) rotate(${turn}deg) scale(${zoom})`;
   });
   const tone = useTransform(() => {
-    const self = read(props, lead);
+    const self = read(props, lag);
     return self ? self.g.tone(self.pose[4]) : "var(--text-muted)";
   });
 
@@ -166,15 +183,16 @@ function Letter({ char, k, lead, ...props }: Props & { char: string; k: number; 
 }
 
 function Title({ id, label, current, ...props }: Props & { id: string; label: string; current: boolean }) {
+  const letters = [...label];
+  const lags = letters.map((_, k) => STAGGER * (letters.length - 1 - k) ** WAVE);
+  // The title itself (its hit area and focus ring) keeps its average letter's timing.
+  const mid = lags.reduce((a, b) => a + b, 0) / lags.length;
   const transform = useTransform(() => {
-    const p = read(props);
+    const p = read(props, mid);
     if (!p) return REST;
     const [x, y, rotate, scale] = p.pose;
     return `translate3d(${x}px, ${y - rest(props.i, p.g)[1]}px, 0) rotate(${rotate}deg) scale(${scale})`;
   });
-  const letters = [...label];
-  const lags = letters.map((_, k) => STAGGER * (letters.length - 1 - k) ** WAVE);
-  const mid = lags.reduce((a, b) => a + b, 0) / lags.length;
 
   return (
     <motion.a
@@ -186,8 +204,7 @@ function Title({ id, label, current, ...props }: Props & { id: string; label: st
       style={{ bottom: `${EDGE + (n - 1 - props.i) * ROW + HALF - BIG / 2}rem`, transform }}
     >
       {letters.map((char, k) => (
-        // Re-centred on the average lag, so the title itself (its hit area and focus ring) keeps mid-word timing.
-        <Letter key={k} {...props} char={char} k={k} lead={mid - lags[k]} />
+        <Letter key={k} {...props} char={char} k={k} lag={lags[k]} mid={mid} />
       ))}
     </motion.a>
   );
