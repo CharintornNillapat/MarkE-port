@@ -48,7 +48,7 @@ export function ScrollRuler() {
           />
           {i % 2 === 0 && (
             <span
-              className="absolute right-0 -translate-y-1/2 font-mono text-2xs text-text-subtle"
+              className="absolute right-0 -translate-y-1/2 font-mono text-2xs text-text-muted"
               style={{ top: `${i * 2.5}%` }}
             >
               {String(i * 2.5).padStart(2, "0")}

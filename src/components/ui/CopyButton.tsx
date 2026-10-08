@@ -1,22 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, X } from "lucide-react";
 import { buttonClass } from "@/components/ui/Button";
 import { ui } from "@/content/site";
 
-// DESIGN.MD §4. The Check icon and "Copied" appear only after the clipboard write succeeds,
-// so a blocked copy never claims success. `clipboard` is missing outside secure contexts, hence `?.`.
+// DESIGN.MD §4. Check + "Copied" appear only after the clipboard write succeeds; a blocked write shows
+// X + "Copy failed" instead, so the user knows to copy the text by hand. Both reset after 2s.
+// `clipboard` is missing outside secure contexts, hence the rejected promise fallback.
 export function CopyButton({ value, label }: { value: string; label: string }) {
-  const [copied, setCopied] = useState(false);
+  const [result, setResult] = useState<"done" | "failed" | null>(null);
 
   useEffect(() => {
-    if (!copied) return;
-    const timer = setTimeout(() => setCopied(false), 2000);
+    if (!result) return;
+    const timer = setTimeout(() => setResult(null), 2000);
     return () => clearTimeout(timer);
-  }, [copied]);
+  }, [result]);
 
-  const Icon = copied ? Check : Copy;
+  const Icon = result === "done" ? Check : result === "failed" ? X : Copy;
 
   return (
     <>
@@ -24,9 +25,9 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
         type="button"
         aria-label={label}
         onClick={() =>
-          navigator.clipboard?.writeText(value).then(
-            () => setCopied(true),
-            () => {}, // Denied: nothing to announce; the text and Open link still work.
+          (navigator.clipboard?.writeText(value) ?? Promise.reject()).then(
+            () => setResult("done"),
+            () => setResult("failed"),
           )
         }
         className={buttonClass("secondary", "w-11 px-0 md:w-10")}
@@ -34,7 +35,7 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
         <Icon aria-hidden />
       </button>
       <span aria-live="polite" className="sr-only">
-        {copied ? ui.copy.done : ""}
+        {result ? ui.copy[result] : ""}
       </span>
     </>
   );

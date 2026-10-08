@@ -41,7 +41,7 @@ export const identity = {
   nameTh: "ชรินทร นิลพัตร์",
   nickname: "Mark",
   initials: "CN",
-  role: "Software Engineer — Full-Stack & AI",
+  role: "Software Engineer, Full-Stack & AI",
   education: "B.Eng. Computer Engineering (วศ.บ. วิศวกรรมคอมพิวเตอร์)",
   location: "Thailand",
   availability: "Open to opportunities & freelance work",
@@ -59,7 +59,7 @@ export const contact: ContactChannel[] = [
 
 export const hero = {
   status: identity.availability,
-  line: "Building full-stack web platforms and applied computer-vision systems — from interface to API to model pipeline.",
+  line: "Building full-stack web platforms and applied computer-vision systems, from interface to API to model pipeline.",
   primaryCta: { label: "View Projects", href: "#work" } satisfies Link,
   secondaryCta: { label: "GitHub Profile", href: GITHUB_URL } satisfies Link,
 };
@@ -96,11 +96,11 @@ export const projects: Project[] = [
     category: "Data Platform · Web App",
     featured: true,
     oneLiner:
-      "Dark, data-dense Teamfight Tactics companion — meta comps, tier lists and a personal match dashboard.",
+      "Dark, data-dense Teamfight Tactics companion: meta comps, tier lists and a personal match dashboard.",
     description:
       "Curated meta compositions, champion and item tier lists, and a personal dashboard for one Riot account. Pages read only from Supabase; Riot is called by a single sync service behind a database lock and cooldown, so an API outage degrades freshness, never content. A daily GitHub Actions job refreshes tier data from CommunityDragon and MetaTFT stats.",
     highlight:
-      "Moved functions next to the database region — full page load from Thailand cut from ~1.1–1.7s to ~0.5s",
+      "Moved functions next to the database region: full page load from Thailand cut from ~1.1–1.7s to ~0.5s",
     stack: [
       "Next.js",
       "React 19",
@@ -121,7 +121,7 @@ export const projects: Project[] = [
     oneLiner:
       "Wound segmentation model with a reproducible training and five-part evaluation pipeline.",
     description:
-      "Binary wound segmentation using U-Net with a ResNet34 encoder, trained on a Roboflow COCO export. Refactored from research notebooks into a config-driven pipeline with checkpoint resume and a test suite covering threshold sweep, robustness, public-dataset (FUSeg) generalization, wound-area measurement and false alarms — verified to reproduce the original notebook results byte for byte.",
+      "Binary wound segmentation using U-Net with a ResNet34 encoder, trained on a Roboflow COCO export. Refactored from research notebooks into a config-driven pipeline with checkpoint resume and a test suite covering threshold sweep, robustness, public-dataset (FUSeg) generalization, wound-area measurement and false alarms, verified to reproduce the original notebook results byte for byte.",
     highlight: "Parity check proves the refactor reproduces the original thesis metrics exactly",
     stack: [
       "Python",
@@ -168,7 +168,7 @@ export const skills: SkillGroup[] = [
 
 // OG image: TODO in CONTEXT.md.
 export const seo = {
-  title: "Charintorn Nillapat — Full-Stack & AI Engineer",
+  title: "Charintorn Nillapat | Full-Stack & AI Engineer",
   description:
     "Software engineer from Thailand building full-stack web applications and applied computer-vision systems.",
   url: "https://mark-e-port.vercel.app",
@@ -191,7 +191,7 @@ export const ui = {
   },
   sections,
   project: { demo: "Live", repo: "Code" },
-  copy: { email: "Copy email", github: "Copy GitHub profile link", done: "Copied" },
+  copy: { email: "Copy email", github: "Copy GitHub profile link", done: "Copied", failed: "Copy failed" },
   contact: {
     heading: "Let's Build Something Together",
     line: "Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out.",

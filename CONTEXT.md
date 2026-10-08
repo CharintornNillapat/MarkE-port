@@ -15,7 +15,7 @@ Project facts below were verified against each repo's README (Oct 2026). If a re
 | Name (TH) | ชรินทร นิลพัตร์ |
 | Nickname | Mark |
 | Logo / initials | CN |
-| Role | Software Engineer — Full-Stack & AI |
+| Role | Software Engineer, Full-Stack & AI |
 | Education | B.Eng. Computer Engineering (วศ.บ. วิศวกรรมคอมพิวเตอร์) |
 | Location | Thailand |
 | Availability | Open to opportunities & freelance work |
@@ -37,7 +37,7 @@ No phone number on the site.
 - **Status:** Open to opportunities & freelance work
 - **Wordmark (H1):** Name (EN) from Identity, set as the giant title
 - **Tagline:** Role (from Identity), directly beneath the wordmark
-- **Line:** Building full-stack web platforms and applied computer-vision systems — from interface to API to model pipeline.
+- **Line:** Building full-stack web platforms and applied computer-vision systems, from interface to API to model pipeline.
 - **Primary CTA:** View Projects → `#work`
 - **Secondary CTA:** GitHub Profile → GitHub link
 
@@ -64,9 +64,9 @@ Listed in display order. `featured: yes` → large bento card. `highlight` = one
 ### 2. TFT CompStat
 - **Category:** Data Platform · Web App
 - **Featured:** yes
-- **One-liner:** Dark, data-dense Teamfight Tactics companion — meta comps, tier lists and a personal match dashboard.
+- **One-liner:** Dark, data-dense Teamfight Tactics companion: meta comps, tier lists and a personal match dashboard.
 - **Description:** Curated meta compositions, champion and item tier lists, and a personal dashboard for one Riot account. Pages read only from Supabase; Riot is called by a single sync service behind a database lock and cooldown, so an API outage degrades freshness, never content. A daily GitHub Actions job refreshes tier data from CommunityDragon and MetaTFT stats.
-- **Highlight:** Moved functions next to the database region — full page load from Thailand cut from ~1.1–1.7s to ~0.5s
+- **Highlight:** Moved functions next to the database region: full page load from Thailand cut from ~1.1–1.7s to ~0.5s
 - **Stack:** Next.js, React 19, TypeScript, Tailwind CSS v4, Supabase, Riot Games API, GitHub Actions, Vercel
 - **Repo:** https://github.com/CharintornNillapat/tft-compstat
 - **Demo:** https://tft-compstat.vercel.app
@@ -75,7 +75,7 @@ Listed in display order. `featured: yes` → large bento card. `highlight` = one
 - **Category:** Deep Learning · Computer Vision · Healthcare
 - **Featured:** yes
 - **One-liner:** Wound segmentation model with a reproducible training and five-part evaluation pipeline.
-- **Description:** Binary wound segmentation using U-Net with a ResNet34 encoder, trained on a Roboflow COCO export. Refactored from research notebooks into a config-driven pipeline with checkpoint resume and a test suite covering threshold sweep, robustness, public-dataset (FUSeg) generalization, wound-area measurement and false alarms — verified to reproduce the original notebook results byte for byte.
+- **Description:** Binary wound segmentation using U-Net with a ResNet34 encoder, trained on a Roboflow COCO export. Refactored from research notebooks into a config-driven pipeline with checkpoint resume and a test suite covering threshold sweep, robustness, public-dataset (FUSeg) generalization, wound-area measurement and false alarms, verified to reproduce the original notebook results byte for byte.
 - **Highlight:** Parity check proves the refactor reproduces the original thesis metrics exactly
 - **Stack:** Python, PyTorch, segmentation_models_pytorch, Albumentations, Google Colab
 - **Repo:** https://github.com/CharintornNillapat/wound-segmentation
@@ -140,6 +140,7 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.copy.email` | Copy email | CopyButton `aria-label`, email row |
 | `ui.copy.github` | Copy GitHub profile link | CopyButton `aria-label`, GitHub row |
 | `ui.copy.done` | Copied | CopyButton live announcement |
+| `ui.copy.failed` | Copy failed | CopyButton live announcement when the clipboard write is blocked |
 | `ui.contact.heading` | Let's Build Something Together | Contact card heading |
 | `ui.contact.line` | Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out. | Contact card short line |
 | `ui.contact.open` | Open link | Open-link button labels in contact rows |
@@ -154,7 +155,7 @@ Eyebrow numbers count only the sections actually rendered. Footer reads `© {cur
 
 ## SEO / Metadata
 
-- **Title:** Charintorn Nillapat — Full-Stack & AI Engineer
+- **Title:** Charintorn Nillapat | Full-Stack & AI Engineer
 - **Description:** Software engineer from Thailand building full-stack web applications and applied computer-vision systems.
 - **Site URL:** https://mark-e-port.vercel.app
 - **OG image:** TODO (1200×630)
