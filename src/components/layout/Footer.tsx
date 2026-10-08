@@ -20,7 +20,7 @@ export async function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={github.label}
-            className="inline-flex size-11 items-center justify-center rounded-[10px] text-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-text"
+            className="inline-flex size-11 items-center justify-center rounded-[10px] text-text-muted transition-[color,background-color] duration-150 hover:bg-surface-2 hover:text-text"
           >
             <GithubIcon className="size-5" />
           </a>

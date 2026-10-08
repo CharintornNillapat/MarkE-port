@@ -39,7 +39,8 @@ export function NavLinks({ className, linkClassName, onNavigate }: Props) {
             aria-current={active === id ? "true" : undefined}
             onClick={onNavigate}
             className={cn(
-              "text-text-muted transition-colors duration-150 hover:text-text aria-[current=true]:text-accent",
+              // Not transition-colors: it would also fade the focus ring's outline-color in over 150ms.
+              "text-text-muted transition-[color,background-color] duration-150 hover:text-text aria-[current=true]:text-accent",
               linkClassName,
             )}
           >
