@@ -43,6 +43,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </noscript>
         {/* DESIGN.MD §6: with reduced motion, framer skips transforms and keeps only the fade. */}
         <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        {/* Static grain over everything (DESIGN.MD §6); never takes pointer input. */}
+        <div aria-hidden className="grain pointer-events-none fixed inset-0 z-50" />
       </body>
     </html>
   );

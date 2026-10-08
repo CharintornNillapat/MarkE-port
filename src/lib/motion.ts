@@ -19,3 +19,16 @@ export const revealItem = {
     show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
   } satisfies Variants,
 };
+
+// Hairline that draws in left → right inside a `reveal` group (origin-left on the element).
+// Reduced motion skips the scale, so the line is simply there.
+export const revealLine = {
+  "data-reveal": "",
+  variants: {
+    hidden: { scaleX: 0 },
+    show: { scaleX: 1, transition: { duration: 0.6, ease: [0.2, 0.9, 0.2, 1] } },
+  } satisfies Variants,
+};
+
+// DESIGN.MD §6 spring for pointer-driven motion (tilt, magnetic CTAs).
+export const spring = { stiffness: 150, damping: 20 };

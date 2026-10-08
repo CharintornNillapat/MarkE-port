@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { GithubIcon } from "@/components/ui/icons";
+import { Tilt } from "@/components/ui/Tilt";
 import { projects, ui, type Project } from "@/content/site";
 import { reveal, revealItem } from "@/lib/motion";
 
@@ -26,8 +27,10 @@ export function Work() {
 function ProjectCard({ project }: { project: Project }) {
   const { title, category, featured, oneLiner, description, highlight, stack, demo, repo } = project;
 
-  return (
+  const card = (
     <Card className="flex h-full flex-col">
+      {/* Featured cards: a light travels round the border (off for reduced motion, DESIGN.MD §6). */}
+      {featured && <span aria-hidden className="border-beam" />}
       <p className="font-mono text-xs uppercase tracking-widest text-text-muted">{category}</p>
       <h3 className="mt-3 text-lg font-medium text-text">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-text-muted">{oneLiner}</p>
@@ -68,4 +71,7 @@ function ProjectCard({ project }: { project: Project }) {
       )}
     </Card>
   );
+
+  // Featured cards also lean toward the mouse.
+  return featured ? <Tilt className="h-full">{card}</Tilt> : card;
 }

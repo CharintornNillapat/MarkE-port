@@ -41,6 +41,31 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
+/* DESIGN.MD §6 motion: odometer easing and the three aurora drift loops (transform only). */
+@theme {
+  --ease-odometer: cubic-bezier(0.2, 0.9, 0.2, 1);
+
+  --animate-aurora-1: aurora-1 22s ease-in-out infinite alternate;
+  --animate-aurora-2: aurora-2 18s ease-in-out infinite alternate;
+  --animate-aurora-3: aurora-3 25s ease-in-out infinite alternate;
+
+  @keyframes aurora-1 {
+    to {
+      transform: translate3d(--spacing(24), --spacing(12), 0) scale(1.1);
+    }
+  }
+  @keyframes aurora-2 {
+    to {
+      transform: translate3d(--spacing(-20), --spacing(16), 0) scale(0.9);
+    }
+  }
+  @keyframes aurora-3 {
+    to {
+      transform: translate3d(--spacing(12), --spacing(-16), 0) scale(1.15);
+    }
+  }
+}
+
 /* DESIGN.MD §5 hero background: --glow radial at the top + faint 48px grid, faded out by a mask.
    The mask's `black` is alpha only, never a rendered color. */
 @utility hero-backdrop {
@@ -55,27 +80,114 @@
   mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 30%, transparent);
 }
 
-/* DESIGN.MD §4 card hover glow: --glow radial centred on the pointer (CardGlow sets --glow-x/--glow-y).
-   Precise pointers with hover only, and off for reduced motion. Sits behind the content via Card's `isolate`. */
+/* DESIGN.MD §5 aurora: soft --glow orbs behind the hero; drift via motion-safe:animate-aurora-* (static otherwise).
+   The field fades out toward the hero's bottom edge so the clipped orbs never leave a seam. */
+@utility aurora-field {
+  mask-image: linear-gradient(black 55%, transparent);
+}
+
+@utility aurora-orb {
+  position: absolute;
+  width: --spacing(144);
+  height: --spacing(144);
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, var(--glow), transparent);
+}
+
+/* DESIGN.MD §6 grain: static grayscale SVG noise over the whole page; breaks up gradient banding. */
+@utility grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: --spacing(50);
+  opacity: 0.04;
+}
+
+/* Registered so CSS can interpolate them: the spotlight glides after the pointer, the beam turns. */
+@property --mouse-x {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+@property --mouse-y {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+@property --beam-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* DESIGN.MD §4 card spotlight, two layers following --mouse-x/--mouse-y (written by CardGlow):
+   ::before is a soft --glow wash behind the content (z -1 inside Card's `isolate`);
+   ::after is a 1px --accent border light, brightest on the stretch of border nearest the pointer.
+   Precise pointers with hover only, and off for reduced motion. Masks' `black` is alpha only. */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  [data-glow]::before {
+  [data-glow] {
+    transition:
+      border-color 150ms,
+      --mouse-x 120ms ease-out,
+      --mouse-y 120ms ease-out;
+  }
+
+  [data-glow]::before,
+  [data-glow]::after {
     content: "";
     position: absolute;
-    inset: 0;
-    z-index: -1;
     border-radius: inherit;
     pointer-events: none;
-    background: radial-gradient(
-      circle --spacing(80) at var(--glow-x, 50%) var(--glow-y, 50%),
-      var(--glow),
-      transparent
-    );
     opacity: 0;
     transition: opacity 200ms;
   }
 
-  [data-glow]:hover::before {
+  [data-glow]::before {
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(circle --spacing(80) at var(--mouse-x) var(--mouse-y), var(--glow), transparent);
+  }
+
+  [data-glow]::after {
+    inset: -1px;
+    padding: 1px;
+    background: radial-gradient(circle --spacing(48) at var(--mouse-x) var(--mouse-y), var(--accent), transparent);
+    mask:
+      linear-gradient(black 0 0) content-box,
+      linear-gradient(black 0 0);
+    mask-composite: exclude;
+  }
+
+  [data-glow]:hover::before,
+  [data-glow]:hover::after {
     opacity: 1;
+  }
+}
+
+/* DESIGN.MD §6 border beam: a short --accent arc travelling round the border (StatusPill, featured cards).
+   Rendered only when motion is allowed; the static border stays either way. */
+.border-beam {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .border-beam {
+    display: block;
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(from var(--beam-angle), transparent 0 300deg, var(--accent) 360deg);
+    mask:
+      linear-gradient(black 0 0) content-box,
+      linear-gradient(black 0 0);
+    mask-composite: exclude;
+    animation: border-beam 6s linear infinite;
+  }
+}
+
+@keyframes border-beam {
+  to {
+    --beam-angle: 360deg;
   }
 }
 

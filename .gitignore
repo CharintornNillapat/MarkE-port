@@ -42,3 +42,6 @@ next-env.d.ts
 
 # screenshots (ROADMAP Phase 6)
 .screenshots/
+
+# local reference notes on third-party sites (never committed)
+.ref-snapshots/

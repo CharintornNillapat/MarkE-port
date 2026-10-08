@@ -1,6 +1,7 @@
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { GithubIcon } from "@/components/ui/icons";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { hero, identity } from "@/content/site";
 
@@ -20,6 +21,12 @@ const keepHyphenatedWords = (text: string) =>
 export function Hero() {
   return (
     <section id="top" aria-labelledby="top-heading" className="relative isolate">
+      {/* Aurora: three --glow orbs drifting on 18–25s loops (transform only); still when motion is reduced. */}
+      <div aria-hidden className="aurora-field pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <span className="aurora-orb -top-48 left-1/4 motion-safe:animate-aurora-1" />
+        <span className="aurora-orb top-0 -right-24 motion-safe:animate-aurora-2" />
+        <span className="aurora-orb top-1/4 -left-40 motion-safe:animate-aurora-3" />
+      </div>
       <div aria-hidden className="hero-backdrop pointer-events-none absolute inset-0 -z-10" />
       {/* pt clears the fixed navbar; content is centred in the remaining height. */}
       <div className="mx-auto flex min-h-[80svh] max-w-6xl flex-col items-start justify-center px-4 pt-28 pb-16 sm:px-6">
@@ -38,10 +45,12 @@ export function Hero() {
           {hero.subheadline}
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button href={hero.primaryCta.href}>
-            {hero.primaryCta.label}
-            <ArrowDown aria-hidden />
-          </Button>
+          <Magnetic>
+            <Button href={hero.primaryCta.href}>
+              {hero.primaryCta.label}
+              <ArrowDown aria-hidden />
+            </Button>
+          </Magnetic>
           <Button href={hero.secondaryCta.href} variant="secondary">
             <GithubIcon />
             {hero.secondaryCta.label}

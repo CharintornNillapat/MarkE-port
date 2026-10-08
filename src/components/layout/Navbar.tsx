@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { identity, ui } from "@/content/site";
 import { MobileMenu } from "./MobileMenu";
 import { NavLinks } from "./NavLinks";
@@ -19,7 +20,9 @@ export function Navbar() {
           linkClassName="rounded-full px-3 py-2 text-sm"
         />
         <div className="ml-auto flex items-center gap-1 md:ml-0">
-          <Button href={ui.nav.cta.href}>{ui.nav.cta.label}</Button>
+          <Magnetic>
+            <Button href={ui.nav.cta.href}>{ui.nav.cta.label}</Button>
+          </Magnetic>
           <div className="md:hidden">
             <MobileMenu />
           </div>

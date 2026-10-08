@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { visibleSections } from "@/content/site";
+import { useActiveSection } from "@/lib/useActiveSection";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -11,24 +11,7 @@ type Props = {
 };
 
 export function NavLinks({ className, linkClassName, onNavigate }: Props) {
-  const [active, setActive] = useState<string>();
-
-  useEffect(() => {
-    // Active = the section crossing a thin band just above the middle of the viewport.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const { target, isIntersecting } of entries) {
-          setActive((cur) => (isIntersecting ? target.id : cur === target.id ? undefined : cur));
-        }
-      },
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
-    for (const { id } of visibleSections) {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    }
-    return () => observer.disconnect();
-  }, []);
+  const active = useActiveSection();
 
   return (
     <ul className={className}>
