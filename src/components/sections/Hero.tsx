@@ -40,7 +40,7 @@ export function Hero() {
         </p>
         <h1
           id="top-heading"
-          className="mt-3 text-balance font-display text-4xl font-semibold leading-[1.05] tracking-tight text-text sm:text-6xl"
+          className="mt-3 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-text sm:text-6xl"
         >
           {keepHyphenatedWords(hero.headline)}
         </h1>

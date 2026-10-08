@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  cubicBezier,
   interpolate,
   motion,
   useMotionValue,
@@ -17,7 +18,7 @@ import { visibleSections } from "@/content/site";
 
 // DESIGN.MD §6 section index (lg+), in the tracker gutter the page containers keep free (pr-tracker),
 // everything right-aligned on the right-6 line.
-// Titles are set in the display face at text-4xl/none extrabold (2.25rem): full size when docked beneath the
+// Titles are set at text-4xl/none bold (2.25rem): full size when docked beneath the
 // navbar, 0.5 on the rail, 1/3 (= 12px) in the stacks. Layout in rem, top to bottom: passed stack →
 // docked title → odometer → rail → upcoming stack.
 const n = visibleSections.length;
@@ -36,7 +37,10 @@ const SMALL = 1 / 3; // stacked titles, unless the margin is too narrow for that
 const RIDE = 0.5;
 const LIFT = 4; // scroll (rem) for leaving the stack and turning onto the rail
 const DOCK = 8; // scroll (rem) for turning off the rail into the dock, and for the previous title to retire
-const STAGGER = 0.75; // scroll (rem) one letter runs ahead of the next, so titles peel off letter by letter
+// Letters peel off one by one: the m-th letter from the right trails the first by STAGGER · m^WAVE rem of
+// scroll, so each gap is a little wider than the last (a trailing wave).
+const STAGGER = 0.5;
+const WAVE = 1.35;
 const ROOM = 0.5; // gap (rem) every title but the docked one keeps from the content column, in every frame
 const REST = `scale(${SMALL})`;
 
@@ -69,6 +73,10 @@ function keepClear(pose: Pose, i: number, g: Geometry): Pose {
 
 // Cubic ease in-out over a 0–1 progress, clamped.
 const ease = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+// Into the dock: a long soft settle (the 0.25, 1, 0.5, 1 curve) with no abrupt stop. That curve starts at
+// 4× speed, so its input is squared to ease the letter off the rail instead of jerking it off.
+const settle = cubicBezier(0.25, 1, 0.5, 1);
+const arrive = (t: number) => settle(Math.min(Math.max(t, 0), 1) ** 2);
 const mix = (a: Pose, b: Pose, t: number) => a.map((v, k) => v + (b[k] - v) * t) as Pose;
 // Scroll position at which a title docks: its section's top reaches the rail top (the last one docks at
 // the end of the page, which it can't scroll past).
@@ -84,21 +92,16 @@ const docked = (g: Geometry): Pose => [0, g.rem * (DOCK_TOP + BIG / 2), 0, 1, 1]
 // turns flat into the giant dock beneath the navbar → shrinks into the passed stack while the next docks.
 function flight(i: number, y: number, g: Geometry): Pose {
   const railTop = g.rem * RAIL_TOP;
-  const railBottom = g.height - g.rem * RAIL_BOTTOM;
-  const ride = railBottom - railTop;
+  const ride = g.height - g.rem * RAIL_BOTTOM - railTop;
   const lift = g.rem * LIFT;
   const dock = g.rem * DOCK;
   const left = dockAt(i, g) - y; // scroll still to go before this title docks
-  const docking = left >= ride ? 0 : ease((dock - left) / dock);
+  // Lifts toward a rail point that already moves with the scroll, so it joins the ride at scroll speed
+  // (no stop-and-go where lift and ride meet).
+  const lifted = mix(rest(i, g), onRail(railTop + Math.max(left, 0), g), ease((ride + lift - left) / lift));
+  const docking = arrive((dock - left) / dock);
   const retiring = i < n - 1 ? ease((dock - (dockAt(i + 1, g) - y)) / dock) : 0;
-
-  let pose =
-    left >= ride + lift
-      ? rest(i, g)
-      : left >= ride
-        ? mix(rest(i, g), onRail(railBottom, g), ease((ride + lift - left) / lift))
-        : mix(onRail(railTop + Math.max(left, 0), g), docked(g), docking);
-  pose = mix(pose, passed(i, g), retiring);
+  const pose = mix(mix(lifted, docked(g), docking), passed(i, g), retiring);
   // The docked title is the one thing allowed over the content column (beneath the navbar, like it).
   return mix(keepClear(pose, i, g), pose, docking * (1 - retiring));
 }
@@ -143,7 +146,9 @@ function Letter({ char, k, lead, ...props }: Props & { char: string; k: number; 
     const turn = rk - r;
     const zoom = sk / s;
     const b = (turn * Math.PI) / 180;
-    return `translate(${ox + zoom * c * Math.cos(b) - c}px, ${oy + zoom * c * Math.sin(b)}px) rotate(${turn}deg) scale(${zoom})`;
+    // translate3d: each letter gets its own compositor layer, so it glides at subpixel precision instead
+    // of being repainted (and pixel-snapped) inside its title's layer every frame.
+    return `translate3d(${ox + zoom * c * Math.cos(b) - c}px, ${oy + zoom * c * Math.sin(b)}px, 0) rotate(${turn}deg) scale(${zoom})`;
   });
   const tone = useTransform(() => {
     const self = read(props, lead);
@@ -165,9 +170,11 @@ function Title({ id, label, current, ...props }: Props & { id: string; label: st
     const p = read(props);
     if (!p) return REST;
     const [x, y, rotate, scale] = p.pose;
-    return `translate(${x}px, ${y - rest(props.i, p.g)[1]}px) rotate(${rotate}deg) scale(${scale})`;
+    return `translate3d(${x}px, ${y - rest(props.i, p.g)[1]}px, 0) rotate(${rotate}deg) scale(${scale})`;
   });
   const letters = [...label];
+  const lags = letters.map((_, k) => STAGGER * (letters.length - 1 - k) ** WAVE);
+  const mid = lags.reduce((a, b) => a + b, 0) / lags.length;
 
   return (
     <motion.a
@@ -175,12 +182,12 @@ function Title({ id, label, current, ...props }: Props & { id: string; label: st
       aria-label={label}
       aria-current={current ? "true" : undefined}
       // Anchored at its bottom-stack row (also the no-JS layout); the flight is a transform from there.
-      className="group pointer-events-auto absolute right-0 origin-right whitespace-nowrap font-display text-4xl/none font-extrabold uppercase will-change-transform"
+      className="group pointer-events-auto absolute right-0 origin-right whitespace-nowrap text-4xl/none font-bold uppercase tracking-wider will-change-transform"
       style={{ bottom: `${EDGE + (n - 1 - props.i) * ROW + HALF - BIG / 2}rem`, transform }}
     >
       {letters.map((char, k) => (
-        // The middle letter keeps the title's timing; the ones to its right lead, those to its left trail.
-        <Letter key={k} {...props} char={char} k={k} lead={STAGGER * (k - (letters.length - 1) / 2)} />
+        // Re-centred on the average lag, so the title itself (its hit area and focus ring) keeps mid-word timing.
+        <Letter key={k} {...props} char={char} k={k} lead={mid - lags[k]} />
       ))}
     </motion.a>
   );

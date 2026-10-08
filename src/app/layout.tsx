@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MotionConfig } from "framer-motion";
-import { Geist, Geist_Mono, Noto_Sans_Thai, Syne } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Thai } from "next/font/google";
 import { seo } from "@/content/site";
 import "./globals.css";
 
@@ -11,12 +11,6 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// DESIGN.MD §3 display face (wide, extended): H1, H2 and the section index.
-const syne = Syne({
-  variable: "--font-syne",
   subsets: ["latin"],
 });
 
@@ -40,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${notoSansThai.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoSansThai.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg font-sans text-text">
         {/* Entrance items render hidden until framer-motion runs; without JS they'd stay hidden. */}

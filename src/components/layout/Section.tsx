@@ -21,7 +21,7 @@ export function Section({ id, label, heading, number, children }: Props) {
           <motion.h2
             {...revealItem}
             id={headingId}
-            className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl"
+            className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl"
           >
             {heading}
           </motion.h2>

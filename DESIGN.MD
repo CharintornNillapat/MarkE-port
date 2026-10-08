@@ -9,7 +9,7 @@ Dark studio aesthetic (Linear / Vercel). Mood reference: getartcraft.com — dee
 Principles:
 - **One accent color.** Everything else is grayscale.
 - **Depth from borders and glow**, not drop shadows.
-- **Monospace for metadata** (tags, dates, labels); a wide display face for H1, H2 and the section index; sans for everything else.
+- **Monospace for metadata** (tags, dates, labels); sans for everything else.
 - **Motion is purposeful and physics-driven** (springs, pointer-tracked light, slow ambient loops, one lightweight WebGL constellation in the hero — §6), never in the way of reading, and fully off under `prefers-reduced-motion` (the WebGL layer is never even loaded).
 
 ## 2. Tokens
@@ -50,19 +50,18 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 
 - **Sans:** Geist Sans (`next/font`), fallback Inter → system-ui.
 - **Mono:** Geist Mono.
-- **Display:** Syne (`next/font`, variable 400–800), fallback Geist Sans → system-ui, as `font-display`. Wide geometric face for H1, H2 and the section index; its 800 weight is an extended cut.
 - **Thai:** Geist has no Thai glyphs — add **Noto Sans Thai** (or IBM Plex Sans Thai) to the font stack so the Thai name renders correctly.
 
 | Role | Classes |
 |---|---|
-| H1 (hero, one per page) | `font-display text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05] text-[--text]` |
-| H2 (section) | `font-display text-3xl sm:text-4xl font-semibold tracking-tight` |
+| H1 (hero, one per page) | `text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05] text-[--text]` |
+| H2 (section) | `text-3xl sm:text-4xl font-semibold tracking-tight` |
 | H3 (card title) | `text-lg font-medium` |
 | Eyebrow (section label) | mono `text-xs uppercase tracking-widest text-[--text-muted]` — format `01 / WORK` |
 | Body | `text-base sm:text-lg leading-relaxed text-[--text-muted] max-w-prose` |
 | Card body (one-liner, description) | `text-sm leading-relaxed text-[--text-muted]` |
 | Meta / badge | mono `text-xs` |
-| Section index | `font-display text-4xl/none font-extrabold uppercase`; docked `text-[--text]` at full size (36px); on the rail rotated −90° at 0.5; in the stacks `text-[--text-muted]` at 1/3 (= 12px), smaller only if the margin is too narrow to keep 8px clear (≈ 11.4px at 1024–1359px) |
+| Section index | sans `text-4xl/none font-bold uppercase tracking-wider`; docked `text-[--text]` at full size (36px); on the rail rotated −90° at 0.5; in the stacks `text-[--text-muted]` at 1/3 (= 12px), smaller only if the margin is too narrow to keep 8px clear |
 
 ## 4. Components
 
@@ -119,7 +118,7 @@ Crafted, but never in the way of reading. Every effect below uses `--accent` / `
 - **Springs** (pointer-driven, mouse only): `stiffness 150`, `damping 20`.
   - **Tilt** — featured project cards: `rotateX/rotateY` up to **4°** from the pointer offset, perspective 1000px; settles flat on leave.
   - **Magnetic** — primary CTAs: drift up to **6px** toward the pointer within an 8px zone around the button (md+); springs back on leave.
-- **Section index** — scroll-linked, not triggered and not sprung: every title's pose is a direct function of the scroll position, so it tracks native scrolling 1:1 with no lag. Per title: waits in the bottom stack → over 4rem of scroll lifts out, rotates −90° onto the rail at 0.5 and partly brightens → rides up the rail level with its section's top edge → over the next 8rem turns flat and grows into the giant dock beneath the navbar in full `--text` → shrinks into the passed stack while the next title docks (the last section docks at the end of the page). Each stage eases in-out (cubic) over its scroll distance. **Split letters:** every letter runs that same path offset by 0.75rem of scroll from its neighbour (right-hand letters lead), so a title peels off the stack letter by letter, strings out up the rail and reassembles in the dock; at rest the offsets cancel. Transform and colour only.
+- **Section index** — scroll-linked, not triggered and not sprung: every title's pose is a direct function of the scroll position, so it tracks native scrolling 1:1 with no lag. Per title: waits in the bottom stack → over 4rem of scroll lifts out (cubic in-out) toward a rail point that already moves with the scroll, rotating −90° onto the rail at 0.5 and partly brightening, so it joins the ride at scroll speed with no stop-and-go → rides up the rail level with its section's top edge → over the next 8rem turns flat and grows into the giant dock beneath the navbar in full `--text`, eased by `cubic-bezier(0.25, 1, 0.5, 1)` on a squared input (eases off the rail, long soft settle, no abrupt start or stop) → shrinks into the passed stack (cubic in-out) while the next title docks (the last section docks at the end of the page). **Split letters:** every letter runs that same path; the m-th letter from the right trails the first by 0.5 · m^1.35 rem of scroll (each gap a little wider than the last: a trailing wave), so a title peels off letter by letter, strings out up the rail and reassembles in the dock; at rest the offsets cancel. Letters move with `translate3d` on their own compositor layers (subpixel-smooth, no repaint). Transform and colour only.
 - **Hero constellation (WebGL, three.js):** 140 points (70 below 768px), each joined to ≤ 3 neighbours closer than a fixed radius; points round, `--accent` at 70%, lines `--accent` at 15%, read from the CSS token at runtime. The field sways ±6° on a 40s loop and the camera drifts on a 30s loop; with a mouse (never touch), the camera eases toward the pointer (≈ 0.4s, up to ≈ 3.4°). Fades in over 600ms once loaded and shares the aurora's bottom fade. Budget: geometry built once (no per-frame allocation), device pixel ratio ≤ 2, ≤ 60fps, paused while the hero is off screen. three.js is `import()`ed after hydration, so it never blocks first paint; under reduced motion it is not fetched, and turning reduced motion on tears the scene down (WebGL context released).
 - **Ambient loops** (the only motion allowed past 600ms, all `transform`/paint, never layout):
   - Aurora — three `--glow` orbs (576px) in the Hero, `ease-in-out infinite alternate` drifts of 18s / 22s / 25s.
