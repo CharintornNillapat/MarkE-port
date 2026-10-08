@@ -1,6 +1,6 @@
 # ROADMAP — Build Phases
 
-**Current phase: 4**
+**Current phase: 5**
 
 Rules:
 - Do **only** the current phase. Each phase = one session.
@@ -40,11 +40,11 @@ Note: Button (link, auto new-tab for external), StatusPill (motion-safe pulse), 
 **Done when:** spans match the table at `lg`, 2 cols at `md`, 1 col on mobile · no link rendered for `—`/`TODO` · all 4 projects shown in CONTEXT order.
 Note: Card (hover border), Badge, Work bento (`lgSpans` by position, secondary-Button links with sr-only titles, first 5 stack badges); DESIGN §3 "Card body" added; FinLife stack reordered in CONTEXT + site.ts. TODO: no project images yet; Contact never becomes the active nav link until Stack/Contact have content (Phase 4).
 
-## [ ] Phase 4 — Stack + Contact
+## [x] Phase 4 — Stack + Contact
 - Stack: 4 group cards. Contact: rows for email and GitHub with `CopyButton`.
 
 **Done when:** copy works and announces "Copied" · no phone number anywhere · LinkedIn row hidden while `TODO`.
-Note:
+Note: Stack (2×2 group cards, all badges), Contact card (rows: icon · display · CopyButton · Open link with sr-only channel), CopyButton (Check + "Copied" only after a successful write, 2s reset); `buttonClass` exported from Button. Contact now becomes the active nav link at page bottom (Phase 1 TODO closed). TODO: real-clipboard paste checked manually only (headless denies clipboard permission).
 
 ## [ ] Phase 5 — Experience + motion
 - `Experience` timeline component (still hidden while empty).
