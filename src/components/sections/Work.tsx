@@ -55,7 +55,10 @@ function ProjectCard({ project }: { project: Project }) {
         <div className="mt-auto flex flex-wrap gap-3 pt-6">
           {demo && (
             <Button href={demo} variant="secondary">
-              <ExternalLink aria-hidden />
+              <ExternalLink
+                aria-hidden
+                className="motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+              />
               {ui.project.demo}
               <span className="sr-only"> {title}</span>
             </Button>

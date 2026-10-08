@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { ScrollRuler } from "@/components/layout/ScrollRuler";
 import { Section } from "@/components/layout/Section";
+import { SectionIndex } from "@/components/layout/SectionIndex";
 import { Contact } from "@/components/sections/Contact";
 import { Experience } from "@/components/sections/Experience";
 import { Hero } from "@/components/sections/Hero";
@@ -33,6 +34,7 @@ export default function Home() {
       </main>
       <Footer />
       <ScrollRuler />
+      <SectionIndex />
       <CardGlow />
     </>
   );

@@ -41,8 +41,10 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-/* DESIGN.MD §6 motion: odometer easing and the three aurora drift loops (transform only). */
+/* DESIGN.MD §6 motion: odometer easing and the three aurora drift loops (transform only).
+   `wide:` (DESIGN.MD §2) is where the section index fits in the margin beside the content. */
 @theme {
+  --breakpoint-wide: 90rem;
   --ease-odometer: cubic-bezier(0.2, 0.9, 0.2, 1);
 
   --animate-aurora-1: aurora-1 22s ease-in-out infinite alternate;
@@ -192,6 +194,13 @@
 }
 
 @layer base {
+  /* DESIGN.MD §6: anchor jumps glide natively (no smooth-scroll library), and jump instantly for reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   /* DESIGN.MD §4 focus ring, applied to every interactive element. */
   :focus-visible {
     outline: 2px solid var(--accent);

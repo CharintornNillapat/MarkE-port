@@ -21,7 +21,7 @@ export default function NotFound() {
             {ui.notFound.line}
           </p>
           <Button href={ui.notFound.back.href} className="mt-8">
-            <ArrowLeft aria-hidden />
+            <ArrowLeft aria-hidden className="motion-safe:group-hover:-translate-x-0.5" />
             {ui.notFound.back.label}
           </Button>
         </div>

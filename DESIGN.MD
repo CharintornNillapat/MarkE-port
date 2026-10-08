@@ -10,7 +10,7 @@ Principles:
 - **One accent color.** Everything else is grayscale.
 - **Depth from borders and glow**, not drop shadows.
 - **Monospace for metadata** (tags, dates, labels); sans for everything else.
-- **Motion is purposeful and physics-driven** (springs, pointer-tracked light, slow ambient loops — §6), never in the way of reading, and fully off under `prefers-reduced-motion`.
+- **Motion is purposeful and physics-driven** (springs, pointer-tracked light, slow ambient loops, one lightweight WebGL constellation in the hero — §6), never in the way of reading, and fully off under `prefers-reduced-motion` (the WebGL layer is never even loaded).
 
 ## 2. Tokens
 
@@ -43,6 +43,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 - Section vertical padding: `py-16` mobile, `py-24` ≥ `md`
 - Grid gap: `gap-4`
 - Card padding: `p-6`
+- Breakpoints: Tailwind defaults plus `wide` = `90rem` (1440px), the first width where the margin beside the container fits the section index without covering content.
 
 ## 3. Typography
 
@@ -59,6 +60,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 | Body | `text-base sm:text-lg leading-relaxed text-[--text-muted] max-w-prose` |
 | Card body (one-liner, description) | `text-sm leading-relaxed text-[--text-muted]` |
 | Meta / badge | mono `text-xs` |
+| Section index | mono uppercase `tracking-widest`, set at `text-lg/none`; active `text-[--text]` at full size, others `text-[--text-muted]` at 2/3 scale (= `text-xs`) |
 
 ## 4. Components
 
@@ -69,6 +71,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 - Secondary: transparent, `border border-[--border]`, hover `bg-[--surface-2] border-[--border-strong]`
 - Both: `h-10 px-4`, icon + label gap `2`, `focus-visible:ring-2 ring-[--accent] ring-offset-2 ring-offset-[--bg]`
 - Primary CTAs (Hero "View Projects", Navbar "Get in Touch") are **magnetic** — see §6.
+- Arrow-style icons nudge 2px in their direction on hover (§6): `ArrowDown` down, `ExternalLink` up-right, `ArrowLeft` left. Other icons stay still.
 
 **Card** — `bg-[--surface] border border-[--border] rounded-2xl p-6`. Hover: `border-[--border-strong]` + a two-layer **spotlight** following the pointer (§6): a soft `--glow` wash behind the content and a 1px `--accent` border light, brightest on the stretch of border nearest the pointer. Desktop pointer devices only; off for reduced motion. **Featured** project cards also get the border beam and 3D tilt (§6).
 
@@ -76,11 +79,13 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 
 **StatusPill** — rounded-full border pill with a small pulsing `--success` dot (CSS animation, not an emoji) + label, plus the border beam (§6).
 
+**Section index** — `wide` (≥ 1440px) only, fixed `bottom-6 right-6` in the margin beside the container, below the scroll ruler. Frosted panel: `rounded-2xl border border-[--border]/50 bg-[--surface]/40 backdrop-blur-md p-4`. One link per rendered section (labels from `CONTEXT.md`), each in its own row; the active section's title springs up into a top slot at full size (§6), the others stay small and muted. Fixed size, so it never jumps. Real links in Tab order (after the footer), active one `aria-current`; stack rows 24px apart (WCAG 2.5.8). Over the hero nothing is active.
+
 **CopyButton** — copies a value to clipboard; icon swaps Copy → Check for 2s; announces "Copied" via `aria-live="polite"`; has an `aria-label` such as "Copy email".
 
 ## 5. Page structure (in order)
 
-1. **Hero** (`#top`) — StatusPill → eyebrow-style line `Name (EN) · Role` → H1 → sub-headline → primary + secondary buttons. Background: `--glow` radial at top + faint grid pattern faded out with a mask + three drifting `--glow` aurora orbs (§6). `min-h-[80svh]`, content vertically centered; the Hero itself has no entrance animation.
+1. **Hero** (`#top`) — StatusPill → eyebrow-style line `Name (EN) · Role` → H1 → sub-headline → primary + secondary buttons. Background: `--glow` radial at top + faint grid pattern faded out with a mask + three drifting `--glow` aurora orbs + the WebGL constellation on top of them (§6). The CSS layers are the fallback for reduced motion and no JS. `min-h-[80svh]`, content vertically centered; the Hero itself has no entrance animation.
 2. **Work** (`#work`, eyebrow `01 / WORK`) — bento grid.
    - `lg`: `grid-cols-6`, CONTEXT order, no gaps:
 
@@ -99,24 +104,30 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 5. **Contact** (`#contact`, `04 / CONTACT`) — one wide card: heading + short line, then one row per contact channel in CONTEXT (email, GitHub): lucide icon · display text · CopyButton · open-link button. Hide `TODO` channels.
 6. **Footer** — `border-t border-[--border]`, `© {current year} Charintorn Nillapat` + GitHub icon link. Small, muted.
 
+Fixed page chrome outside the flow: Navbar, scroll ruler (`xl`), section index (`wide`).
+
 ## 6. Motion
 
-Crafted, but never in the way of reading. Every effect below uses `--accent` / `--glow` only (one accent colour, §1), animates `transform`, `opacity` or paint-only custom properties (never layout properties on pointer move), and is switched off by `prefers-reduced-motion: reduce`.
+Crafted, but never in the way of reading. Every effect below uses `--accent` / `--glow` only (one accent colour, §1), animates `transform`, `opacity` or paint-only custom properties (never layout properties on pointer move) — or, for the constellation, draws on its own WebGL canvas — and is switched off by `prefers-reduced-motion: reduce`.
 
 - **Entrance:** fade in + `translateY(8px → 0)`, 400ms, ease-out, triggered once when in view; children stagger 60ms. Section hairline (top of each section header) draws in `scaleX(0 → 1)` from the left, 600ms, `cubic-bezier(0.2, 0.9, 0.2, 1)`.
-- **Hover:** color/border/opacity transitions 150–200ms; focusable elements never transition `outline-color`. Scale at most `1.02`.
+- **Hover:** color/border/opacity transitions 150–200ms; focusable elements never transition `outline-color`. Scale at most `1.02`. Arrow icons in buttons nudge **2px** toward their direction (`translate`, 150ms, `motion-safe:` only).
+- **Smooth scroll:** anchor jumps glide with native `scroll-behavior: smooth`, set only under `prefers-reduced-motion: no-preference`.
 - **Spotlight (Card):** pointer position in `--mouse-x/--mouse-y` (registered custom properties easing 120ms ease-out, so the light glides). Layers fade in over 200ms on hover: surface wash `radial-gradient(circle 320px, --glow → transparent)` behind content; border light `radial-gradient(circle 192px, --accent → transparent)` masked to the 1px ring. `(hover: hover) and (pointer: fine)` only.
 - **Springs** (pointer-driven, mouse only): `stiffness 150`, `damping 20`.
   - **Tilt** — featured project cards: `rotateX/rotateY` up to **4°** from the pointer offset, perspective 1000px; settles flat on leave.
   - **Magnetic** — primary CTAs: drift up to **6px** toward the pointer within an 8px zone around the button (md+); springs back on leave.
+  - **Section index** — the active title springs from its stack row into the top slot (`y` + `scale` 2/3 → 1, origin top-right; settles in ≈ 0.8s); the title it replaces springs back to its row. Its colour fades `--text-muted` → `--text` over 200ms.
+- **Hero constellation (WebGL, three.js):** 140 points (70 below 768px), each joined to ≤ 3 neighbours closer than a fixed radius; points round, `--accent` at 70%, lines `--accent` at 15%, read from the CSS token at runtime. The field sways ±6° on a 40s loop and the camera drifts on a 30s loop; with a mouse (never touch), the camera eases toward the pointer (≈ 0.4s, up to ≈ 3.4°). Fades in over 600ms once loaded and shares the aurora's bottom fade. Budget: geometry built once (no per-frame allocation), device pixel ratio ≤ 2, ≤ 60fps, paused while the hero is off screen. three.js is `import()`ed after hydration, so it never blocks first paint; under reduced motion it is not fetched, and turning reduced motion on tears the scene down (WebGL context released).
 - **Ambient loops** (the only motion allowed past 600ms, all `transform`/paint, never layout):
   - Aurora — three `--glow` orbs (576px) in the Hero, `ease-in-out infinite alternate` drifts of 18s / 22s / 25s.
   - Border beam — a 60° `--accent` arc travelling round the border of the StatusPill and featured cards, 6s linear.
   - Status dot pulse — 2s, opacity only.
+  - Constellation camera drift 30s and field sway 40s (see Hero constellation).
 - **Grain:** static grayscale SVG noise (`feTurbulence`, 200px tile) over the whole page at 4% opacity, `pointer-events: none`. Not motion, so it stays on.
 - **Scroll ruler (xl+):** fixed right-edge track, 20 ticks (long every 25%); `--accent` fill = scroll progress via `scaleY`; the active section's eyebrow number rolls like an odometer, 280ms `cubic-bezier(0.2, 0.9, 0.2, 1)`. Decorative (`aria-hidden`).
-- **Reduced motion:** no tilt, magnetic drift, spotlight, aurora drift, border beam or pulse. Entrance becomes fade-only, the hairline and odometer change instantly. Grain and the scroll-progress fill (it only moves when the user scrolls) remain.
-- No parallax, no scroll-jacking, no smooth-scroll library.
+- **Reduced motion:** no constellation (not loaded), tilt, magnetic drift, spotlight, aurora drift, border beam, pulse or icon nudge. Entrance becomes fade-only; the hairline, odometer and section index change instantly; anchor jumps are instant. Grain and the scroll-progress fill (it only moves when the user scrolls) remain.
+- No scroll-linked parallax (the constellation's mouse parallax is the only parallax), no scroll-jacking, no smooth-scroll library.
 
 ## 7. Accessibility & responsive
 

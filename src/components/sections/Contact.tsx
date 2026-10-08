@@ -41,7 +41,10 @@ export function Contact() {
                   {/* Email copies the bare address; links copy the full URL. */}
                   <CopyButton value={href.replace(/^mailto:/, "")} label={copy} />
                   <Button href={href} variant="secondary">
-                    <ExternalLink aria-hidden />
+                    <ExternalLink
+                      aria-hidden
+                      className="motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                    />
                     {ui.contact.open}
                     <span className="sr-only"> {label}</span>
                   </Button>

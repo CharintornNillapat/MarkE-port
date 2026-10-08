@@ -9,9 +9,10 @@ const variants = {
 type Variant = keyof typeof variants;
 
 // Shared with CopyButton, which needs the same look on a real <button>.
+// `group` + the svg transition let arrow icons nudge 2px on hover (DESIGN.MD §6); each icon sets its direction.
 export const buttonClass = (variant: Variant, className?: string) =>
   cn(
-    "inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-medium transition-[color,background-color,border-color,opacity] duration-150 md:h-10 [&_svg]:size-4 [&_svg]:shrink-0",
+    "group inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-medium transition-[color,background-color,border-color,opacity] duration-150 md:h-10 [&_svg]:size-4 [&_svg]:shrink-0 motion-safe:[&_svg]:transition-transform",
     variants[variant],
     className,
   );
