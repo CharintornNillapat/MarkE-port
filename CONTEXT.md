@@ -143,6 +143,10 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.contact.heading` | Let's Build Something Together | Contact card heading |
 | `ui.contact.line` | Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out. | Contact card short line |
 | `ui.contact.open` | Open link | Open-link button labels in contact rows |
+| `ui.notFound.code` | 404 | 404 page eyebrow |
+| `ui.notFound.title` | Page not found | 404 page H1 · tab title |
+| `ui.notFound.line` | This page doesn't exist. | 404 page short line |
+| `ui.notFound.back` | Back to home → `/` | 404 page button |
 
 Eyebrow numbers count only the sections actually rendered. Footer reads `© {current year} {Name (EN)}` (no extra label).
 
@@ -152,5 +156,5 @@ Eyebrow numbers count only the sections actually rendered. Footer reads `© {cur
 
 - **Title:** Charintorn Nillapat — Full-Stack & AI Engineer
 - **Description:** Software engineer from Thailand building full-stack web applications and applied computer-vision systems.
-- **Site URL:** TODO (set after first deploy)
+- **Site URL:** https://mark-e-port.vercel.app
 - **OG image:** TODO (1200×630)

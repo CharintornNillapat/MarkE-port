@@ -168,11 +168,12 @@ export const skills: SkillGroup[] = [
   },
 ];
 
-// Site URL and OG image: TODO in CONTEXT.md.
+// OG image: TODO in CONTEXT.md.
 export const seo = {
   title: "Charintorn Nillapat — Full-Stack & AI Engineer",
   description:
     "Software engineer from Thailand building full-stack web applications and applied computer-vision systems.",
+  url: "https://mark-e-port.vercel.app",
 };
 
 // DESIGN.MD §5 order. Eyebrow numbers (`01 / WORK`) are assigned to the sections actually rendered.
@@ -197,6 +198,12 @@ export const ui = {
     heading: "Let's Build Something Together",
     line: "Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out.",
     open: "Open link",
+  },
+  notFound: {
+    code: "404",
+    title: "Page not found",
+    line: "This page doesn't exist.",
+    back: { label: "Back to home", href: "/" } satisfies Link,
   },
 };
 

@@ -21,9 +21,13 @@ const notoSansThai = Noto_Sans_Thai({
   preload: false,
 });
 
+// CONTEXT.md §SEO. OG image is TODO there, so link previews get title + description only.
 export const metadata: Metadata = {
+  metadataBase: new URL(seo.url),
   title: seo.title,
   description: seo.description,
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", url: "/", title: seo.title, description: seo.description },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
