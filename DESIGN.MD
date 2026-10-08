@@ -78,7 +78,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 
 ## 5. Page structure (in order)
 
-1. **Hero** (`#top`) — StatusPill → H1 → sub-headline → primary + secondary buttons. Background: `--glow` radial at top + faint grid pattern faded out with a mask. `min-h-[80svh]`, content vertically centered.
+1. **Hero** (`#top`) — StatusPill → eyebrow-style line `Name (EN) · Role` → H1 → sub-headline → primary + secondary buttons. Background: `--glow` radial at top + faint grid pattern faded out with a mask. `min-h-[80svh]`, content vertically centered.
 2. **Work** (`#work`, eyebrow `01 / WORK`) — bento grid.
    - `lg`: `grid-cols-6`, CONTEXT order, no gaps:
 

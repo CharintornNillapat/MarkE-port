@@ -1,6 +1,6 @@
 # ROADMAP — Build Phases
 
-**Current phase: 2**
+**Current phase: 3**
 
 Rules:
 - Do **only** the current phase. Each phase = one session.
@@ -28,11 +28,11 @@ Note: Next 16.4 + Tailwind 4.3 + shadcn (radix) scaffold; DESIGN tokens with Tai
 **Done when:** anchor links scroll to each section · mobile menu opens/closes with keyboard and Esc · no Experience link while it's empty.
 Note: Section, Navbar (+ NavLinks active-section highlight), MobileMenu (Radix Dialog drawer), Footer ("use cache" year); Experience hidden, eyebrows 01–03; global accent focus ring. TODO: Navbar CTA uses inline button classes until Phase 2 `Button`; recheck active-link highlight once sections have real height.
 
-## [ ] Phase 2 — Hero
+## [x] Phase 2 — Hero
 - `StatusPill`, `Button` (primary/secondary), Hero with glow + grid background.
 
 **Done when:** one `<h1>` on the page · CTAs go to `#work` and GitHub · readable at 375px with no overflow.
-Note:
+Note: Button (link, auto new-tab for external), StatusPill (motion-safe pulse), Hero with glow + masked 48px grid; added name · role line above H1 (DESIGN §5 + CONTEXT §Hero updated); Navbar CTA now uses Button. No TODOs.
 
 ## [ ] Phase 3 — Work (bento)
 - `Card`, `Badge`, project card with highlight callout and Live/Code links; grid spans per `DESIGN.MD §5`.

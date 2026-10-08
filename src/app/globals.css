@@ -37,6 +37,20 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
+/* DESIGN.MD §5 hero background: --glow radial at the top + faint 48px grid, faded out by a mask.
+   The mask's `black` is alpha only, never a rendered color. */
+@utility hero-backdrop {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 0%, var(--glow), transparent),
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    --spacing(12) --spacing(12),
+    --spacing(12) --spacing(12);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 30%, transparent);
+}
+
 @layer base {
   /* DESIGN.MD §4 focus ring, applied to every interactive element. */
   :focus-visible {

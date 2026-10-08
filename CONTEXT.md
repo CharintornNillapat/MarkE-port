@@ -35,6 +35,7 @@ No phone number on the site.
 ## Hero
 
 - **Status:** Open to opportunities & freelance work
+- **Name line:** Name (EN) · Role (from Identity), shown above the headline
 - **Headline:** Engineering Intelligent Systems & High-Performance Web Applications.
 - **Sub-headline:** Computer Engineering graduate building full-stack web platforms and applied computer-vision systems — from interface to API to model pipeline.
 - **Primary CTA:** View Projects → `#work`
