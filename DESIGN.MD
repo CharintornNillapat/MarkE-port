@@ -43,7 +43,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 - Section vertical padding: `py-16` mobile, `py-24` ≥ `md`
 - Grid gap: `gap-4`
 - Card padding: `p-6`
-- Breakpoints: Tailwind defaults plus `wide` = `90rem` (1440px), the first width where the margin beside the container fits the section index without covering content.
+- Breakpoints: Tailwind defaults. The right-margin scroll tracker (section index + ruler) starts at `xl` (1280px), the first width whose margin beside the container (88px) fits it without covering content; at `lg` the margin is only 24px.
 
 ## 3. Typography
 
@@ -60,7 +60,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 | Body | `text-base sm:text-lg leading-relaxed text-[--text-muted] max-w-prose` |
 | Card body (one-liner, description) | `text-sm leading-relaxed text-[--text-muted]` |
 | Meta / badge | mono `text-xs` |
-| Section index | mono uppercase `tracking-widest`, set at `text-lg/none`; active `text-[--text]` at full size, others `text-[--text-muted]` at 2/3 scale (= `text-xs`) |
+| Section index | mono uppercase `tracking-widest`, set at `text-lg/none`; on the rail `text-[--text]` at full size, rotated −90°; in the stacks `text-[--text-muted]` at 2/3 scale (= `text-xs`) |
 
 ## 4. Components
 
@@ -79,7 +79,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 
 **StatusPill** — rounded-full border pill with a small pulsing `--success` dot (CSS animation, not an emoji) + label, plus the border beam (§6).
 
-**Section index** — `wide` (≥ 1440px) only, fixed `bottom-6 right-6` in the margin beside the container, below the scroll ruler. Frosted panel: `rounded-2xl border border-[--border]/50 bg-[--surface]/40 backdrop-blur-md p-4`. One link per rendered section (labels from `CONTEXT.md`), each in its own row; the active section's title springs up into a top slot at full size (§6), the others stay small and muted. Fixed size, so it never jumps. Real links in Tab order (after the footer), active one `aria-current`; stack rows 24px apart (WCAG 2.5.8). Over the hero nothing is active.
+**Section index + scroll ruler (scroll tracker)** — `xl` (≥ 1280px) only, fixed in the right margin (`right-6`), no backing panel: everything stays in the empty margin beside the container. Top to bottom: passed sections (small, muted, one row each) → the odometer number → the tick rail → upcoming sections (small, muted, one row each). One link per rendered section (labels from `CONTEXT.md`); each title flies along the rail with scroll (§6) and the docked one is `aria-current`. Real links in Tab order (after the footer); stack rows 24px apart (WCAG 2.5.8). Without JS the titles sit in the bottom stack as plain links.
 
 **CopyButton** — copies a value to clipboard; icon swaps Copy → Check for 2s; announces "Copied" via `aria-live="polite"`; has an `aria-label` such as "Copy email".
 
@@ -104,7 +104,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 5. **Contact** (`#contact`, `04 / CONTACT`) — one wide card: heading + short line, then one row per contact channel in CONTEXT (email, GitHub): lucide icon · display text · CopyButton · open-link button. Hide `TODO` channels.
 6. **Footer** — `border-t border-[--border]`, `© {current year} Charintorn Nillapat` + GitHub icon link. Small, muted.
 
-Fixed page chrome outside the flow: Navbar, scroll ruler (`xl`), section index (`wide`).
+Fixed page chrome outside the flow: Navbar, scroll tracker (section index + ruler, `xl`).
 
 ## 6. Motion
 
@@ -117,7 +117,7 @@ Crafted, but never in the way of reading. Every effect below uses `--accent` / `
 - **Springs** (pointer-driven, mouse only): `stiffness 150`, `damping 20`.
   - **Tilt** — featured project cards: `rotateX/rotateY` up to **4°** from the pointer offset, perspective 1000px; settles flat on leave.
   - **Magnetic** — primary CTAs: drift up to **6px** toward the pointer within an 8px zone around the button (md+); springs back on leave.
-  - **Section index** — the active title springs from its stack row into the top slot (`y` + `scale` 2/3 → 1, origin top-right; settles in ≈ 0.8s); the title it replaces springs back to its row. Its colour fades `--text-muted` → `--text` over 200ms.
+  - **Section index** — scroll-linked, not triggered: every title's pose is a function of the scroll position run through this spring (so titles trail fast scrolling slightly and settle with a small overshoot). Per title: waits in the bottom stack → over 4rem of scroll lifts out, rotates −90° and grows to full size onto the rail, brightening `--text-muted` → `--text` → rides up the rail level with its section's top edge → docks at the rail top (the last section docks at the end of the page) → shrinks back to horizontal into the passed stack at the top while the next title rides up to it (handoff = longest title + 1rem). Transform and colour only.
 - **Hero constellation (WebGL, three.js):** 140 points (70 below 768px), each joined to ≤ 3 neighbours closer than a fixed radius; points round, `--accent` at 70%, lines `--accent` at 15%, read from the CSS token at runtime. The field sways ±6° on a 40s loop and the camera drifts on a 30s loop; with a mouse (never touch), the camera eases toward the pointer (≈ 0.4s, up to ≈ 3.4°). Fades in over 600ms once loaded and shares the aurora's bottom fade. Budget: geometry built once (no per-frame allocation), device pixel ratio ≤ 2, ≤ 60fps, paused while the hero is off screen. three.js is `import()`ed after hydration, so it never blocks first paint; under reduced motion it is not fetched, and turning reduced motion on tears the scene down (WebGL context released).
 - **Ambient loops** (the only motion allowed past 600ms, all `transform`/paint, never layout):
   - Aurora — three `--glow` orbs (576px) in the Hero, `ease-in-out infinite alternate` drifts of 18s / 22s / 25s.
@@ -125,9 +125,9 @@ Crafted, but never in the way of reading. Every effect below uses `--accent` / `
   - Status dot pulse — 2s, opacity only.
   - Constellation camera drift 30s and field sway 40s (see Hero constellation).
 - **Grain:** static grayscale SVG noise (`feTurbulence`, 200px tile) over the whole page at 4% opacity, `pointer-events: none`. Not motion, so it stays on.
-- **Scroll ruler (xl+):** fixed right-edge track, 20 ticks (long every 25%); `--accent` fill = scroll progress via `scaleY`; the active section's eyebrow number rolls like an odometer, 280ms `cubic-bezier(0.2, 0.9, 0.2, 1)`. Decorative (`aria-hidden`).
-- **Reduced motion:** no constellation (not loaded), tilt, magnetic drift, spotlight, aurora drift, border beam, pulse or icon nudge. Entrance becomes fade-only; the hairline, odometer and section index change instantly; anchor jumps are instant. Grain and the scroll-progress fill (it only moves when the user scrolls) remain.
-- No scroll-linked parallax (the constellation's mouse parallax is the only parallax), no scroll-jacking, no smooth-scroll library.
+- **Scroll ruler (xl+):** the section index's rail — a right-margin track between the passed and upcoming stacks, 20 ticks (long every 25%); `--accent` fill = scroll progress via `scaleY`; above it the docked section's eyebrow number rolls like an odometer, 280ms `cubic-bezier(0.2, 0.9, 0.2, 1)`. Decorative (`aria-hidden`).
+- **Reduced motion:** no constellation (not loaded), tilt, magnetic drift, spotlight, aurora drift, border beam, pulse or icon nudge. Entrance becomes fade-only; the hairline and odometer change instantly; section index titles snap between their states (stack / docked / passed) with no flight; anchor jumps are instant. Grain and the scroll-progress fill (it only moves when the user scrolls) remain.
+- No parallax on page content (the constellation's mouse parallax is the only parallax), no scroll-jacking, no smooth-scroll library. Scroll-linked motion is limited to the right-margin tracker.
 
 ## 7. Accessibility & responsive
 

@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
-import { ScrollRuler } from "@/components/layout/ScrollRuler";
 import { Section } from "@/components/layout/Section";
 import { SectionIndex } from "@/components/layout/SectionIndex";
 import { Contact } from "@/components/sections/Contact";
@@ -33,7 +32,6 @@ export default function Home() {
         ))}
       </main>
       <Footer />
-      <ScrollRuler />
       <SectionIndex />
       <CardGlow />
     </>

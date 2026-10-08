@@ -41,10 +41,8 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-/* DESIGN.MD §6 motion: odometer easing and the three aurora drift loops (transform only).
-   `wide:` (DESIGN.MD §2) is where the section index fits in the margin beside the content. */
+/* DESIGN.MD §6 motion: odometer easing and the three aurora drift loops (transform only). */
 @theme {
-  --breakpoint-wide: 90rem;
   --ease-odometer: cubic-bezier(0.2, 0.9, 0.2, 1);
 
   --animate-aurora-1: aurora-1 22s ease-in-out infinite alternate;
