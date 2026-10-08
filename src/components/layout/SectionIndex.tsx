@@ -17,26 +17,27 @@ import { visibleSections } from "@/content/site";
 
 // DESIGN.MD §6 section index (lg+), in the tracker gutter the page containers keep free (pr-tracker),
 // everything right-aligned on the right-6 line.
-// Titles are set at text-xl/none bold (1.25rem); the stacks show them at 0.6 (= 12px), the rail at 0.8.
-// Layout in rem, top to bottom: passed stack / docked title (one row per section) → odometer → rail →
-// upcoming stack.
+// Titles are set in the display face at text-4xl/none extrabold (2.25rem): full size when docked beneath the
+// navbar, 0.5 on the rail, 1/3 (= 12px) in the stacks. Layout in rem, top to bottom: passed stack →
+// docked title → odometer → rail → upcoming stack.
 const n = visibleSections.length;
 const EDGE = 1.5; // top-6 / bottom-6
 const ROW = 1.5; // stack pitch: a 12px title + 12px gap (24px apart, WCAG 2.5.8)
 const HALF = 0.375; // centre of a 12px stacked title
-const BIG = 1.25; // text-xl/none line box
+const BIG = 2.25; // text-4xl/none line box
 const ODOMETER = 1.125; // text-lg/none
 const GAP = 0.75;
-const RULER_TOP = EDGE + (n - 1) * ROW + BIG + GAP; // below the lowest possible docked title
+const DOCK_TOP = EDGE + (n - 1) * ROW + GAP; // below the longest passed stack, so also below the navbar
+const RULER_TOP = DOCK_TOP + BIG + GAP;
 const RAIL_TOP = RULER_TOP + ODOMETER + GAP;
 const RAIL_BOTTOM = EDGE + n * ROW; // from the viewport bottom: above the upcoming stack
 const TRACK = 1.5; // the ruler's 1rem tick track + 0.5rem gap
-const SMALL = 0.6; // stacked titles, unless the margin is too narrow for that (then smaller)
-const RIDE = 0.8;
+const SMALL = 1 / 3; // stacked titles, unless the margin is too narrow for that (then smaller)
+const RIDE = 0.5;
 const LIFT = 4; // scroll (rem) for leaving the stack and turning onto the rail
 const DOCK = 8; // scroll (rem) for turning off the rail into the dock, and for the previous title to retire
-const ROOM = 0.5; // gap (rem) every title keeps from the content column, in every frame
-const DOCK_ROOM = 1; // gap (rem) a flat docked title needs; narrower margins dock upright instead
+const STAGGER = 0.75; // scroll (rem) one letter runs ahead of the next, so titles peel off letter by letter
+const ROOM = 0.5; // gap (rem) every title but the docked one keeps from the content column, in every frame
 const REST = `scale(${SMALL})`;
 
 // Anchor (right-centre of a title) in viewport px, rotation, scale, brightness 0–1.
@@ -47,10 +48,10 @@ type Geometry = {
   tops: number[]; // document y of each section
   maxScroll: number;
   widths: number[]; // each title's unscaled width
-  line: number; // and line box height
+  letters: number[][]; // and each letter's centre, in px from the title's right edge
+  line: number; // line box height
   margin: number; // px between the content column and the right-6 line
   small: number;
-  horizontal: boolean; // the widest title fits beside the content when docked flat
   tone: (bright: number) => string;
 };
 
@@ -77,15 +78,10 @@ const dockedIndex = (y: number, g: Geometry) => g.tops.filter((_, i) => y >= doc
 const rest = (i: number, g: Geometry): Pose => [0, g.height - g.rem * (EDGE + (n - 1 - i) * ROW + HALF), 0, g.small, 0];
 const passed = (i: number, g: Geometry): Pose => [0, g.rem * (EDGE + i * ROW + HALF), 0, g.small, 0];
 const onRail = (y: number, g: Geometry): Pose => [-g.rem * (TRACK + (BIG * RIDE) / 2), y, -90, RIDE, 0.6];
-// Docked: flat at full size in its own row under the passed titles or, where that can't fit beside the
-// content, upright at the rail top.
-const docked = (i: number, g: Geometry): Pose =>
-  g.horizontal
-    ? [0, g.rem * (EDGE + i * ROW + BIG / 2), 0, 1, 1]
-    : [-g.rem * (TRACK + BIG / 2), g.rem * RAIL_TOP, -90, 1, 1];
+const docked = (g: Geometry): Pose => [0, g.rem * (DOCK_TOP + BIG / 2), 0, 1, 1];
 
 // Scrubbed 1:1 by scroll: stack → turns onto the rail and rides up it level with its section's top edge →
-// turns flat into the dock → shrinks into the passed stack while the next title docks.
+// turns flat into the giant dock beneath the navbar → shrinks into the passed stack while the next docks.
 function flight(i: number, y: number, g: Geometry): Pose {
   const railTop = g.rem * RAIL_TOP;
   const railBottom = g.height - g.rem * RAIL_BOTTOM;
@@ -93,62 +89,99 @@ function flight(i: number, y: number, g: Geometry): Pose {
   const lift = g.rem * LIFT;
   const dock = g.rem * DOCK;
   const left = dockAt(i, g) - y; // scroll still to go before this title docks
+  const docking = left >= ride ? 0 : ease((dock - left) / dock);
+  const retiring = i < n - 1 ? ease((dock - (dockAt(i + 1, g) - y)) / dock) : 0;
 
   let pose =
     left >= ride + lift
       ? rest(i, g)
       : left >= ride
         ? mix(rest(i, g), onRail(railBottom, g), ease((ride + lift - left) / lift))
-        : mix(onRail(railTop + Math.max(left, 0), g), docked(i, g), ease((dock - left) / dock));
-
-  if (i < n - 1) pose = mix(pose, passed(i, g), ease((dock - (dockAt(i + 1, g) - y)) / dock));
-  return keepClear(pose, i, g);
+        : mix(onRail(railTop + Math.max(left, 0), g), docked(g), docking);
+  pose = mix(pose, passed(i, g), retiring);
+  // The docked title is the one thing allowed over the content column (beneath the navbar, like it).
+  return mix(keepClear(pose, i, g), pose, docking * (1 - retiring));
 }
 
 // Reduced motion: no flight, each title simply sits in its state.
 function snap(i: number, y: number, g: Geometry): Pose {
   const d = dockedIndex(y, g);
-  return keepClear(i < d ? passed(i, g) : i === d ? docked(i, g) : rest(i, g), i, g);
+  return i === d ? docked(g) : keepClear(i < d ? passed(i, g) : rest(i, g), i, g);
 }
 
-type TitleProps = {
+type Props = {
   i: number;
-  id: string;
-  label: string;
-  current: boolean;
   scroll: MotionValue<number>;
   geometry: MotionValue<Geometry | null>;
   discrete: boolean;
 };
 
-function Title({ i, id, label, current, scroll, geometry, discrete }: TitleProps) {
-  // Read both values on every run: useTransform tracks the motion values read, so an early return before
-  // scroll.get() would leave the title deaf to scrolling.
-  const pose = () => {
-    const y = scroll.get();
-    const g = geometry.get();
-    return g && { g, pose: (discrete ? snap : flight)(i, y, g) };
-  };
+// The title's pose, or a letter's: the title's pose `lead` rem further down the page. Reads both values on
+// every run: useTransform tracks the motion values read, so an early return before scroll.get() would
+// leave it deaf to scrolling.
+function read({ i, scroll, geometry, discrete }: Props, lead = 0) {
+  const y = scroll.get();
+  const g = geometry.get();
+  return g && { g, pose: discrete ? snap(i, y, g) : flight(i, y + g.rem * lead, g) };
+}
+
+// A letter flies on its own copy of the title's path, run ahead or behind by `lead`, expressed relative to
+// the title it sits in (whose transform it inherits). Every resting state leaves it untransformed.
+function Letter({ char, k, lead, ...props }: Props & { char: string; k: number; lead: number }) {
   const transform = useTransform(() => {
-    const p = pose();
-    if (!p) return REST;
-    const [x, y, rotate, scale] = p.pose;
-    return `translate(${x}px, ${y - rest(i, p.g)[1]}px) rotate(${rotate}deg) scale(${scale})`;
+    const title = read(props);
+    const self = read(props, lead);
+    if (!title || !self) return "none";
+    const [x, y, r, s] = title.pose;
+    const [xk, yk, rk, sk] = self.pose;
+    const c = title.g.letters[props.i][k];
+    // Its anchor's offset, taken back into the title's unrotated, unscaled frame.
+    const a = (-r * Math.PI) / 180;
+    const ox = ((xk - x) * Math.cos(a) - (yk - y) * Math.sin(a)) / s;
+    const oy = ((xk - x) * Math.sin(a) + (yk - y) * Math.cos(a)) / s;
+    // Turn and scale about its own centre (c, 0), then move that centre to where its own pose puts it.
+    const turn = rk - r;
+    const zoom = sk / s;
+    const b = (turn * Math.PI) / 180;
+    return `translate(${ox + zoom * c * Math.cos(b) - c}px, ${oy + zoom * c * Math.sin(b)}px) rotate(${turn}deg) scale(${zoom})`;
   });
   const tone = useTransform(() => {
-    const p = pose();
-    return p ? p.g.tone(p.pose[4]) : "var(--text-muted)";
+    const self = read(props, lead);
+    return self ? self.g.tone(self.pose[4]) : "var(--text-muted)";
   });
+
+  return (
+    <motion.span
+      className="inline-block whitespace-pre text-(--tone) group-hover:text-text"
+      style={{ transform, "--tone": tone } as MotionStyle}
+    >
+      {char}
+    </motion.span>
+  );
+}
+
+function Title({ id, label, current, ...props }: Props & { id: string; label: string; current: boolean }) {
+  const transform = useTransform(() => {
+    const p = read(props);
+    if (!p) return REST;
+    const [x, y, rotate, scale] = p.pose;
+    return `translate(${x}px, ${y - rest(props.i, p.g)[1]}px) rotate(${rotate}deg) scale(${scale})`;
+  });
+  const letters = [...label];
 
   return (
     <motion.a
       href={`#${id}`}
+      aria-label={label}
       aria-current={current ? "true" : undefined}
       // Anchored at its bottom-stack row (also the no-JS layout); the flight is a transform from there.
-      className="pointer-events-auto absolute right-0 origin-right whitespace-nowrap text-xl/none font-bold uppercase tracking-wider text-(--tone) will-change-transform hover:text-text"
-      style={{ bottom: `${EDGE + (n - 1 - i) * ROW + HALF - BIG / 2}rem`, transform, "--tone": tone } as MotionStyle}
+      className="group pointer-events-auto absolute right-0 origin-right whitespace-nowrap font-display text-4xl/none font-extrabold uppercase will-change-transform"
+      style={{ bottom: `${EDGE + (n - 1 - props.i) * ROW + HALF - BIG / 2}rem`, transform }}
     >
-      {label}
+      {letters.map((char, k) => (
+        // The middle letter keeps the title's timing; the ones to its right lead, those to its left trail.
+        <Letter key={k} {...props} char={char} k={k} lead={STAGGER * (k - (letters.length - 1) / 2)} />
+      ))}
     </motion.a>
   );
 }
@@ -169,14 +202,13 @@ export function SectionIndex() {
     const measure = () => {
       const css = getComputedStyle(document.documentElement);
       const rem = parseFloat(css.fontSize);
-      // Content column's right edge (container minus its padding) vs. the widest title docked flat.
+      // Content column's right edge (container minus its padding).
       const container = document.querySelector(`#${visibleSections[0]?.id} .max-w-6xl`);
       const contentRight = container
         ? container.getBoundingClientRect().right - parseFloat(getComputedStyle(container).paddingRight)
         : Infinity;
       const titles = [...(root.current?.querySelectorAll("a") ?? [])];
       const widths = titles.map((a) => a.offsetWidth);
-      const widest = Math.max(...widths);
       const margin = document.documentElement.clientWidth - rem * EDGE - contentRight;
       const g: Geometry = {
         rem,
@@ -184,16 +216,19 @@ export function SectionIndex() {
         tops: visibleSections.map(({ id }) => (document.getElementById(id)?.getBoundingClientRect().top ?? 0) + window.scrollY),
         maxScroll: document.documentElement.scrollHeight - window.innerHeight,
         widths,
+        letters: titles.map((a) =>
+          [...a.children].map((l) => (l as HTMLElement).offsetLeft + (l as HTMLElement).offsetWidth / 2 - a.offsetWidth),
+        ),
         line: titles[0]?.offsetHeight ?? rem * BIG,
         margin,
-        small: Math.min(SMALL, (margin - rem * ROOM) / widest),
-        horizontal: widest + rem * DOCK_ROOM <= margin,
+        small: Math.min(SMALL, (margin - rem * ROOM) / Math.max(...widths)),
         tone: interpolate([0, 1], [css.getPropertyValue("--text-muted").trim(), css.getPropertyValue("--text").trim()]),
       };
       geometry.set(g);
       setCurrent(dockedIndex(window.scrollY, g));
     };
     measure();
+    document.fonts.ready.then(measure); // title widths change once the display face loads
     const resize = new ResizeObserver(measure);
     resize.observe(document.body);
     window.addEventListener("resize", measure);
