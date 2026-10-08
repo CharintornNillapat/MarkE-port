@@ -59,9 +59,7 @@ export const contact: ContactChannel[] = [
 
 export const hero = {
   status: identity.availability,
-  headline: "Engineering Intelligent Systems & High-Performance Web Applications.",
-  subheadline:
-    "Computer Engineering graduate building full-stack web platforms and applied computer-vision systems — from interface to API to model pipeline.",
+  line: "Building full-stack web platforms and applied computer-vision systems — from interface to API to model pipeline.",
   primaryCta: { label: "View Projects", href: "#work" } satisfies Link,
   secondaryCta: { label: "GitHub Profile", href: GITHUB_URL } satisfies Link,
 };

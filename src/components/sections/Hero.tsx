@@ -6,7 +6,7 @@ import { Magnetic } from "@/components/ui/Magnetic";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { hero, identity } from "@/content/site";
 
-// Browsers break after a hyphen ("High-" / "Performance"). From sm up, keep hyphenated words whole;
+// Browsers break after a hyphen ("computer-" / "vision"). From sm up, keep hyphenated words whole;
 // below sm the break stays allowed so a long word can't overflow a 320px screen.
 const keepHyphenatedWords = (text: string) =>
   text.split(/(\S+-\S+)/).map((part, i) =>
@@ -31,23 +31,21 @@ export function Hero() {
         <HeroCanvas />
       </div>
       <div aria-hidden className="hero-backdrop pointer-events-none absolute inset-0 -z-10" />
-      {/* pt clears the fixed navbar; content is centred in the remaining height. */}
-      <div className="mx-auto flex min-h-[80svh] max-w-6xl flex-col items-start justify-center px-4 pt-28 pb-16 sm:px-6 lg:pr-tracker">
+      {/* pt clears the fixed navbar; content is centred in the remaining height. Centred on the viewport:
+          lg+ pads both sides by the tracker gutter, not just the right. */}
+      <div className="mx-auto flex min-h-[80svh] max-w-6xl flex-col items-center justify-center px-4 pt-28 pb-16 text-center sm:px-6 lg:px-tracker">
         <StatusPill label={hero.status} />
-        <p className="mt-6 font-mono text-xs uppercase tracking-widest text-text-muted">
-          {/* inline-block: on narrow screens the line breaks at the "·", not inside the role. */}
-          {identity.name} · <span className="inline-block">{identity.role}</span>
-        </p>
         <h1
           id="top-heading"
-          className="mt-3 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-text sm:text-6xl"
+          className="mt-8 text-5xl leading-[0.9] font-bold tracking-tight text-balance text-text uppercase sm:text-7xl lg:text-8xl"
         >
-          {keepHyphenatedWords(hero.headline)}
+          {identity.name}
         </h1>
-        <p className="mt-6 max-w-prose text-base leading-relaxed text-text-muted sm:text-lg">
-          {hero.subheadline}
+        <p className="mt-6 font-mono text-xs tracking-widest text-text-muted uppercase sm:text-sm">{identity.role}</p>
+        <p className="mt-4 max-w-xl text-base leading-relaxed text-balance text-text-muted sm:text-lg">
+          {keepHyphenatedWords(hero.line)}
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Magnetic>
             <Button href={hero.primaryCta.href}>
               {hero.primaryCta.label}

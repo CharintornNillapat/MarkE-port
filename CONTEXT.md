@@ -35,9 +35,9 @@ No phone number on the site.
 ## Hero
 
 - **Status:** Open to opportunities & freelance work
-- **Name line:** Name (EN) · Role (from Identity), shown above the headline
-- **Headline:** Engineering Intelligent Systems & High-Performance Web Applications.
-- **Sub-headline:** Computer Engineering graduate building full-stack web platforms and applied computer-vision systems — from interface to API to model pipeline.
+- **Wordmark (H1):** Name (EN) from Identity, set as the giant title
+- **Tagline:** Role (from Identity), directly beneath the wordmark
+- **Line:** Building full-stack web platforms and applied computer-vision systems — from interface to API to model pipeline.
 - **Primary CTA:** View Projects → `#work`
 - **Secondary CTA:** GitHub Profile → GitHub link
 

@@ -17,12 +17,12 @@ import { Odometer, ScrollRuler } from "@/components/layout/ScrollRuler";
 import { visibleSections } from "@/content/site";
 
 // DESIGN.MD §6 section index (lg+), in the tracker gutter the page containers keep free (pr-tracker),
-// everything right-aligned on the right-12 line, just left of the full-height ScrollRuler lane.
+// everything right-aligned on the right-14 line, just left of the full-height ScrollRuler lane.
 // Titles are set at text-4xl/none bold (2.25rem): full size when docked beneath the
 // navbar, 0.5 on the rail, 1/3 (= 12px) in the stacks. Layout in rem, top to bottom: passed stack →
 // docked title → section number → rail → upcoming stack.
 const n = visibleSections.length;
-const LINE = 3; // right-12: 1rem clear of the ruler lane (right-2, w-6)
+const LINE = 3.5; // right-14: 0.5rem clear of the ruler lane (right-2, w-10)
 const EDGE = 1.5; // top-6 / bottom-6
 const ROW = 1.5; // stack pitch: a 12px title + 12px gap (24px apart, WCAG 2.5.8)
 const HALF = 0.375; // centre of a 12px stacked title
@@ -126,9 +126,11 @@ function flight(i: number, y: number, lag: number, g: Geometry): Pose {
   const docking = arrive((dock - left) / dock);
   const retiring = i < n - 1 ? ease((dock - fold(dockAt(i + 1, g) - y, lag, dock)) / dock) : 0;
   const pose = mix(mix(lifted, docked(g), docking), passed(i, g), retiring);
-  // The docked title is the one thing allowed over the content column (beneath the navbar, like it), so
-  // where the two limits clash (only while a title turns into or out of the dock) the ruler lane wins.
-  return keepRight(mix(keepClear(pose, i, g), pose, docking * (1 - retiring)), g);
+  // Two limits: ROOM clear of the content column (keepClear) and out of the ruler lane (keepRight). They
+  // only clash while a wide title turns. Turning into or out of the dock (the one thing allowed over the
+  // content, like the navbar) the ruler wins; anywhere else the content does.
+  const free = docking * (1 - retiring);
+  return free > 0 ? keepRight(mix(keepClear(pose, i, g), pose, free), g) : keepClear(keepRight(pose, g), i, g);
 }
 
 // Reduced motion: no flight, each title simply sits in its state.
@@ -274,7 +276,7 @@ export function SectionIndex() {
   return (
     <>
       <ScrollRuler />
-      <div ref={root} className="pointer-events-none fixed inset-y-0 right-12 z-30 hidden lg:block">
+      <div ref={root} className="pointer-events-none fixed inset-y-0 right-14 z-30 hidden lg:block">
         {/* The docked section's eyebrow number, rolling like an odometer. Decorative: the titles are the links. */}
         <p
           aria-hidden
