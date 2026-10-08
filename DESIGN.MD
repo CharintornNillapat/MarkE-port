@@ -10,7 +10,7 @@ Principles:
 - **One accent color.** Everything else is grayscale.
 - **Depth from borders and glow**, not drop shadows.
 - **Monospace for metadata** (tags, dates, labels); sans for everything else.
-- **Motion is subtle** and never blocks reading.
+- **Motion is purposeful and physics-driven** (springs, pointer-tracked light, slow ambient loops — §6), never in the way of reading, and fully off under `prefers-reduced-motion`.
 
 ## 2. Tokens
 
