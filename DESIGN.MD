@@ -39,11 +39,12 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 - Navbar, status pill: `9999px` (`rounded-full`)
 
 ### Spacing & layout
-- Container: `max-w-6xl mx-auto px-4 sm:px-6`
+- Container: `max-w-6xl mx-auto px-4 sm:px-6 lg:pr-tracker`
 - Section vertical padding: `py-16` mobile, `py-24` ≥ `md`
 - Grid gap: `gap-4`
 - Card padding: `p-6`
-- Breakpoints: Tailwind defaults. The right-margin scroll tracker (section index + ruler) starts at `xl` (1280px), the first width whose margin beside the container (88px) fits it without covering content; at `lg` the margin is only 24px.
+- Breakpoints: Tailwind defaults. The scroll tracker (section index + ruler) shows from `lg` (1024px).
+- Tracker gutter (`--spacing-tracker`, lg+): containers' right padding is `clamp(1.5rem, 6rem − (100vw − 72rem) / 2, 6rem)`, so content always ends ≥ 6rem from the viewport's right edge — the full 6rem at 1024px, back to the normal 1.5rem once the centred margin is wide enough (≈ 1296px). The tracker lives in that strip and never covers content.
 
 ## 3. Typography
 
@@ -79,7 +80,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 
 **StatusPill** — rounded-full border pill with a small pulsing `--success` dot (CSS animation, not an emoji) + label, plus the border beam (§6).
 
-**Section index + scroll ruler (scroll tracker)** — `xl` (≥ 1280px) only, fixed in the right margin, every element right-aligned on the `right-6` line, no backing panel. Top to bottom: passed sections (small, muted, one row each) with the docked section in the row after them → the odometer number → the tick rail → upcoming sections (small, muted, one row each). The docked title sits **flat** at full size when the widest title + 16px fits beside the content column (≈ 1388px and up); narrower, it docks **upright** at the rail top. No title ever comes within 8px of the content column, in any frame. One link per rendered section (labels from `CONTEXT.md`); each title flies along the rail with scroll (§6) and the docked one is `aria-current`. Real links in Tab order (after the footer); stack rows 24px apart (WCAG 2.5.8). Without JS the titles sit in the bottom stack as plain links.
+**Section index + scroll ruler (scroll tracker)** — `lg` (≥ 1024px) and up, fixed in the tracker gutter (§2), every element right-aligned on the `right-6` line, no backing panel. Top to bottom: passed sections (small, muted, one row each) with the docked section in the row after them → the odometer number → the tick rail → upcoming sections (small, muted, one row each). The docked title sits **flat** at full size when the widest title + 16px fits beside the content column (≈ 1388px and up); narrower, it docks **upright** at the rail top. No title ever comes within 8px of the content column, in any frame. One link per rendered section (labels from `CONTEXT.md`); each title flies along the rail with scroll (§6) and the docked one is `aria-current`. Real links in Tab order (after the footer); stack rows 24px apart (WCAG 2.5.8). Without JS the titles sit in the bottom stack as plain links.
 
 **CopyButton** — copies a value to clipboard; icon swaps Copy → Check for 2s; announces "Copied" via `aria-live="polite"`; has an `aria-label` such as "Copy email".
 
@@ -104,7 +105,7 @@ Define as CSS variables in `globals.css`; map to Tailwind theme names.
 5. **Contact** (`#contact`, `04 / CONTACT`) — one wide card: heading + short line, then one row per contact channel in CONTEXT (email, GitHub): lucide icon · display text · CopyButton · open-link button. Hide `TODO` channels.
 6. **Footer** — `border-t border-[--border]`, `© {current year} Charintorn Nillapat` + GitHub icon link. Small, muted.
 
-Fixed page chrome outside the flow: Navbar, scroll tracker (section index + ruler, `xl`).
+Fixed page chrome outside the flow: Navbar, scroll tracker (section index + ruler, `lg`).
 
 ## 6. Motion
 
@@ -125,7 +126,7 @@ Crafted, but never in the way of reading. Every effect below uses `--accent` / `
   - Status dot pulse — 2s, opacity only.
   - Constellation camera drift 30s and field sway 40s (see Hero constellation).
 - **Grain:** static grayscale SVG noise (`feTurbulence`, 200px tile) over the whole page at 4% opacity, `pointer-events: none`. Not motion, so it stays on.
-- **Scroll ruler (xl+):** the section index's rail — a right-margin track between the passed and upcoming stacks, 20 ticks (long every 25%); `--accent` fill = scroll progress via `scaleY`; above it the docked section's eyebrow number rolls like an odometer, 280ms `cubic-bezier(0.2, 0.9, 0.2, 1)`. Decorative (`aria-hidden`).
+- **Scroll ruler (lg+):** the section index's rail — a right-gutter track between the passed and upcoming stacks, 41 ticks every 2.5% (medium every 12.5%, long every 25%); `--accent` fill = scroll progress via `scaleY`, plus a 2px `--accent` notch at the current progress (`translateY`); above it the docked section's eyebrow number rolls like an odometer, 280ms `cubic-bezier(0.2, 0.9, 0.2, 1)`. Decorative (`aria-hidden`).
 - **Reduced motion:** no constellation (not loaded), tilt, magnetic drift, spotlight, aurora drift, border beam, pulse or icon nudge. Entrance becomes fade-only; the hairline and odometer change instantly; section index titles snap between their states (stack / docked / passed) with no flight; anchor jumps are instant. Grain and the scroll-progress fill (it only moves when the user scrolls) remain.
 - No parallax on page content (the constellation's mouse parallax is the only parallax), no scroll-jacking, no smooth-scroll library. Scroll-linked motion is limited to the right-margin tracker.
 

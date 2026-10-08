@@ -15,7 +15,8 @@ import {
 import { ScrollRuler } from "@/components/layout/ScrollRuler";
 import { visibleSections } from "@/content/site";
 
-// DESIGN.MD §6 section index (xl+), right margin, everything right-aligned on the right-6 line.
+// DESIGN.MD §6 section index (lg+), in the tracker gutter the page containers keep free (pr-tracker),
+// everything right-aligned on the right-6 line.
 // Titles are set at text-xl/none bold (1.25rem); the stacks show them at 0.6 (= 12px), the rail at 0.8.
 // Layout in rem, top to bottom: passed stack / docked title (one row per section) → odometer → rail →
 // upcoming stack.
@@ -144,7 +145,7 @@ function Title({ i, id, label, current, scroll, geometry, discrete }: TitleProps
       href={`#${id}`}
       aria-current={current ? "true" : undefined}
       // Anchored at its bottom-stack row (also the no-JS layout); the flight is a transform from there.
-      className="pointer-events-auto absolute right-0 origin-right whitespace-nowrap text-xl/none font-bold uppercase tracking-wider text-(--tone) hover:text-text"
+      className="pointer-events-auto absolute right-0 origin-right whitespace-nowrap text-xl/none font-bold uppercase tracking-wider text-(--tone) will-change-transform hover:text-text"
       style={{ bottom: `${EDGE + (n - 1 - i) * ROW + HALF - BIG / 2}rem`, transform, "--tone": tone } as MotionStyle}
     >
       {label}
@@ -203,7 +204,7 @@ export function SectionIndex() {
   }, [geometry]);
 
   return (
-    <div ref={root} className="pointer-events-none fixed inset-y-0 right-6 z-30 hidden xl:block">
+    <div ref={root} className="pointer-events-none fixed inset-y-0 right-6 z-30 hidden lg:block">
       <ScrollRuler
         number={current >= 0 ? current + 1 : undefined}
         style={{ top: `${RULER_TOP}rem`, bottom: `${RAIL_BOTTOM}rem` }}

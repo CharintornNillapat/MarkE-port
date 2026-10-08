@@ -32,7 +32,7 @@ export function Hero() {
       </div>
       <div aria-hidden className="hero-backdrop pointer-events-none absolute inset-0 -z-10" />
       {/* pt clears the fixed navbar; content is centred in the remaining height. */}
-      <div className="mx-auto flex min-h-[80svh] max-w-6xl flex-col items-start justify-center px-4 pt-28 pb-16 sm:px-6">
+      <div className="mx-auto flex min-h-[80svh] max-w-6xl flex-col items-start justify-center px-4 pt-28 pb-16 sm:px-6 lg:pr-tracker">
         <StatusPill label={hero.status} />
         <p className="mt-6 font-mono text-xs uppercase tracking-widest text-text-muted">
           {/* inline-block: on narrow screens the line breaks at the "·", not inside the role. */}

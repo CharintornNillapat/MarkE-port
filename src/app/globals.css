@@ -41,6 +41,12 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
+/* DESIGN.MD §2 tracker gutter (lg+): container right padding that keeps a 6rem strip free for the scroll
+   tracker. Full 6rem at 1024px, easing to the normal 1.5rem once the centred margin is wide enough (~1296px). */
+@theme {
+  --spacing-tracker: clamp(1.5rem, calc(6rem - (100vw - 72rem) / 2), 6rem);
+}
+
 /* DESIGN.MD §6 motion: odometer easing and the three aurora drift loops (transform only). */
 @theme {
   --ease-odometer: cubic-bezier(0.2, 0.9, 0.2, 1);

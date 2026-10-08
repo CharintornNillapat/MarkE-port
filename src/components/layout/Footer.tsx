@@ -10,7 +10,7 @@ export async function Footer() {
 
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-6 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-6 sm:px-6 lg:pr-tracker">
         <p className="text-sm text-text-muted">
           © {year} {identity.name}
         </p>

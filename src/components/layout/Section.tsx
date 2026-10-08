@@ -11,7 +11,7 @@ export function Section({ id, label, heading, number, children }: Props) {
   return (
     // scroll-mt keeps anchor jumps clear of the fixed navbar.
     <section id={id} aria-labelledby={headingId} className="scroll-mt-16 py-16 md:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:pr-tracker">
         {/* Hairline draws in, then eyebrow + heading reveal, separately from the content below. */}
         <motion.div {...reveal}>
           <motion.span {...revealLine} aria-hidden className="mb-10 block h-px origin-left bg-border" />
