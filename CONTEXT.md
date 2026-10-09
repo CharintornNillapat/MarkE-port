@@ -136,7 +136,7 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.sections` · experience · heading | Work Experience | Section H2 — hidden while Experience is empty |
 | `ui.sections` · stack · heading | Languages & Tools | Section H2 |
 | `ui.sections` · contact · heading | Get in Touch | Section H2 |
-| `ui.nav.cta` | Hire Mark → `#contact` | Navbar primary button |
+| `ui.nav.cta` | Email me → `#contact` | Navbar primary button |
 | `ui.nav.menu` | Menu | Mobile menu button label · drawer title |
 | `ui.nav.close` | Close menu | Mobile drawer close button label |
 | `ui.project.demo` | Live | Project card link (demo) |

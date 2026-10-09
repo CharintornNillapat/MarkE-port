@@ -65,13 +65,13 @@ Blueprint: square corners everywhere except the floating capsules.
 
 ## 4. Components
 
-**Navbar** — `fixed top-4`, horizontally centered pill; `bg-[--surface]/70 backdrop-blur-md border border-[--border]`. Left: `MARK` logo → `#top` (a capsule, `px-3 tracking-wider`). Center: Work · Experience · Stack · Contact. Right: primary CTA "Hire Mark" → `#contact`. Below `md`: links collapse into a menu button (Radix Dropdown or Sheet); CTA stays visible. Active section link uses `--accent`. Link hover inverts: `bg-[--text] text-[--bg]`.
+**Navbar** — `fixed top-4`, horizontally centered pill; `bg-[--surface]/70 backdrop-blur-md border border-[--border]`. Left: `MARK` logo → `#top` (a capsule, `px-3 tracking-wider`). Center: Work · Experience · Stack · Contact. Right: primary CTA "Email me" → `#contact`. Below `md`: links collapse into a menu button (Radix Dropdown or Sheet); CTA stays visible. Active section link uses `--accent`. Link hover inverts: `bg-[--text] text-[--bg]`.
 
 **Button**
 - Primary: `bg-[--text] text-[--bg]`, hover `opacity-90`
 - Secondary: transparent, `border border-[--text-subtle]` (a control's edge needs 3:1 against the page; `--border` is 1.18:1); hover inverts to `bg-[--text] text-[--bg] border-[--text]` (icons follow, they use `currentColor`). Footer and drawer icon buttons invert the same way.
 - Both: `h-10 px-4`, icon + label gap `2`, `focus-visible:ring-2 ring-[--accent] ring-offset-2 ring-offset-[--bg]`
-- Primary CTAs (Hero "View Projects", Navbar "Hire Mark") are **magnetic** — see §6.
+- Primary CTAs (Hero "View Projects", Navbar "Email me") are **magnetic** — see §6.
 - Arrow-style icons nudge 2px in their direction on hover (§6): `ArrowDown` down, `ExternalLink` up-right, `ArrowLeft` left. Other icons stay still.
 
 **Card** — `bg-[--surface] border border-[--border] p-6`, square. In a blueprint grid (§5) it drops its own border and the grid's shared lines frame it. Hover: a two-layer **spotlight** following the pointer (§6): a soft `--glow` wash behind the content and a 1px `--accent` border light, brightest on the stretch of border nearest the pointer. Desktop pointer devices only; off for reduced motion. **Featured** project cards also get the border beam (§6). No tilt: a tile leaning out of a seamless grid breaks its lines.

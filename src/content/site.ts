@@ -180,7 +180,7 @@ const sections: Section[] = [
 // CONTEXT.md §UI Labels.
 export const ui = {
   nav: {
-    cta: { label: "Hire Mark", href: "#contact" } satisfies Link,
+    cta: { label: "Email me", href: "#contact" } satisfies Link,
     menu: "Menu",
     close: "Close menu",
   },
