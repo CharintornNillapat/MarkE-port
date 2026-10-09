@@ -14,13 +14,14 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { Odometer, ScrollRuler } from "@/components/layout/ScrollRuler";
-import { visibleSections } from "@/content/site";
+import { identity, visibleSections } from "@/content/site";
 
 // DESIGN.MD §6 section index (lg+), in the tracker gutter the page containers keep free (pr-tracker),
 // everything right-aligned on the right-14 line, just left of the full-height ScrollRuler lane.
 // Titles are set at text-4xl/none bold (2.25rem): full size when docked beneath the
-// navbar, 0.5 on the rail, 1/3 (= 12px) in the stacks. Layout in rem, top to bottom: passed stack →
-// docked title → section number → rail → upcoming stack.
+// navbar, 0.5 on the rail, 1/3 (= 12px) in the stacks. Layout in rem, top to bottom: passed stack
+// (headed by the CN wordmark the hero name flies into) → docked title → section number → rail →
+// upcoming stack.
 const n = visibleSections.length;
 const LINE = 3.5; // right-14: 0.5rem clear of the ruler lane (right-2, w-10)
 const EDGE = 1.5; // top-6 / bottom-6
@@ -29,7 +30,7 @@ const HALF = 0.375; // centre of a 12px stacked title
 const BIG = 2.25; // text-4xl/none line box
 const ODOMETER = 1.125; // text-lg/none
 const GAP = 0.75;
-const DOCK_TOP = EDGE + (n - 1) * ROW + GAP; // below the longest passed stack, so also below the navbar
+const DOCK_TOP = EDGE + n * ROW + GAP; // below the longest passed stack (wordmark + n - 1), so also below the navbar
 const NUMBER_TOP = DOCK_TOP + BIG + GAP;
 const RAIL_TOP = NUMBER_TOP + ODOMETER + GAP;
 const RAIL_BOTTOM = EDGE + n * ROW; // from the viewport bottom: above the upcoming stack
@@ -58,6 +59,17 @@ type Geometry = {
   margin: number; // px between the content column and the right-6 line
   small: number;
   tone: (bright: number) => string;
+  wordmark: Wordmark | null;
+};
+
+// The hero name's flight into the wordmark row (DESIGN.MD §6). x is px from the right-14 line, y px from
+// the viewport top.
+type Wordmark = {
+  fly: number; // scroll px by which every letter has landed: the hero name's bottom edge
+  from: [x: number, docY: number, w: number, h: number][]; // each hero letter's centre (y in the document) and size
+  to: [x: number, y: number][]; // where each initial lands: its letter in the CN link
+  initials: number[]; // which hero letters are the initials
+  scale: number; // hero letter → stacked letter
 };
 
 // If a title's rotated, scaled box would reach within ROOM of the content column, slide it right by the
@@ -93,7 +105,7 @@ const dockAt = (i: number, g: Geometry) => Math.min(g.tops[i] - g.rem * RAIL_TOP
 const dockedIndex = (y: number, g: Geometry) => g.tops.filter((_, i) => y >= dockAt(i, g) - 1).length - 1;
 
 const rest = (i: number, g: Geometry): Pose => [0, g.height - g.rem * (EDGE + (n - 1 - i) * ROW + HALF), 0, g.small, 0];
-const passed = (i: number, g: Geometry): Pose => [0, g.rem * (EDGE + i * ROW + HALF), 0, g.small, 0];
+const passed = (i: number, g: Geometry): Pose => [0, g.rem * (EDGE + (i + 1) * ROW + HALF), 0, g.small, 0];
 // On the rail, upright beside the ruler: its foot (first letter) at y, so the word hangs above y and
 // never over the waiting stack below the rail.
 const onRail = (y: number, i: number, g: Geometry): Pose => [
@@ -207,6 +219,7 @@ function Title({ id, label, current, ...props }: Props & { id: string; label: st
 
   return (
     <motion.a
+      data-title
       href={`#${id}`}
       aria-label={label}
       aria-current={current ? "true" : undefined}
@@ -221,6 +234,118 @@ function Title({ id, label, current, ...props }: Props & { id: string; label: st
   );
 }
 
+const LETTERS = [...identity.name.replace(/\s/g, "")];
+
+// Letter k's progress 0–1: they all set off with the first scroll and the rightmost (nearest the index)
+// travel fastest, so the name peels away from its right end and every letter lands at `fly`.
+const travel = (k: number, y: number, w: Wordmark) =>
+  ease(y / (w.fly * (1 - (0.4 * k) / (LETTERS.length - 1))));
+
+type WordmarkProps = Omit<Props, "i">;
+
+// One hero letter in flight: from its place in the hero name (scrolling with the page) to its initial's
+// place in the CN link, or, for every other letter, toward the link while it shrinks and fades out. Each
+// turns a little mid-flight, so the name scatters rather than slides.
+function FlyingLetter({ char, k, scroll, geometry, discrete }: WordmarkProps & { char: string; k: number }) {
+  const transform = useTransform(() => {
+    const y = scroll.get();
+    const w = geometry.get()?.wordmark;
+    if (!w) return "none";
+    const [x0, docY, lw, lh] = w.from[k];
+    const t = travel(k, y, w);
+    const j = w.initials.indexOf(k);
+    const [x1, y1] = j >= 0 ? w.to[j] : [(w.to[0][0] + w.to[w.to.length - 1][0]) / 2, w.to[0][1]];
+    const x = x0 + (x1 - x0) * t;
+    const top = docY - y + (y1 - (docY - y)) * t;
+    const s = 1 + ((j >= 0 ? w.scale : w.scale / 2) - 1) * t;
+    const r = Math.sin(Math.PI * t) * (((k * 47) % 41) - 20);
+    // Anchored at its top-right corner (right-0 top-0), so its centre starts at (-lw/2, lh/2).
+    return `translate3d(${x + lw / 2}px, ${top - lh / 2}px, 0) rotate(${r}deg) scale(${s})`;
+  });
+  const opacity = useTransform(() => {
+    const y = scroll.get();
+    const w = geometry.get()?.wordmark;
+    // Shown only in flight: at 0 the hero's own letters are in place, from `fly` on the CN link is.
+    if (!w || discrete || y <= 0 || y >= w.fly) return 0;
+    return w.initials.includes(k) ? 1 : 1 - Math.min(Math.max((travel(k, y, w) - 0.25) / 0.6, 0), 1);
+  });
+  const color = useTransform(() => {
+    const y = scroll.get();
+    const g = geometry.get();
+    return g?.wordmark ? g.tone(1 - travel(k, y, g.wordmark)) : "var(--text)";
+  });
+
+  return (
+    <motion.span
+      className="absolute top-0 right-0 text-8xl leading-[0.9] font-bold tracking-tight uppercase will-change-transform"
+      style={{ transform, opacity, color }}
+    >
+      {char}
+    </motion.span>
+  );
+}
+
+// Top row of the passed stack: the CN wordmark, a link to the top. It takes over from the flying letters
+// once they land (and, without JS or before measuring, simply sits there).
+function Wordmark(props: WordmarkProps) {
+  const { scroll, geometry } = props;
+  const opacity = useTransform(() => {
+    const w = geometry.get()?.wordmark;
+    return !w || scroll.get() >= w.fly ? 1 : 0;
+  });
+  const transform = useTransform(() => `scale(${geometry.get()?.small ?? SMALL})`);
+
+  return (
+    <>
+      <motion.a
+        data-wordmark-link
+        href="#top"
+        aria-label={identity.name}
+        className="group pointer-events-auto absolute right-0 origin-right whitespace-nowrap text-4xl/none font-bold uppercase tracking-wider"
+        style={{ top: `${EDGE + HALF - BIG / 2}rem`, transform, opacity }}
+      >
+        {[...identity.initials].map((char) => (
+          <span key={char} className="inline-block text-text-muted group-hover:text-text">
+            {char}
+          </span>
+        ))}
+      </motion.a>
+      <div aria-hidden>
+        {LETTERS.map((char, k) => (
+          <FlyingLetter key={k} {...props} char={char} k={k} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+// Where the hero name's letters start and where the initials land, or null if the hero isn't there.
+function measureWordmark(anchor: number, small: number, root: HTMLElement | null): Wordmark | null {
+  const h1 = document.getElementById("top-heading");
+  const link = root?.querySelector<HTMLElement>("[data-wordmark-link]");
+  const letters = [...(h1?.querySelectorAll<HTMLElement>("[data-letter]") ?? [])];
+  if (!h1 || !link || letters.length !== LETTERS.length) return null;
+  // Layout offsets (offsetLeft/Top, relative to the h1), not live rects: the intro may still be moving them.
+  const box = h1.getBoundingClientRect();
+  const marks = [...link.children] as HTMLElement[];
+  return {
+    fly: box.bottom + window.scrollY,
+    from: letters.map((l) => [
+      box.left + l.offsetLeft + l.offsetWidth / 2 - anchor,
+      box.top + window.scrollY + l.offsetTop + l.offsetHeight / 2,
+      l.offsetWidth,
+      l.offsetHeight,
+    ]),
+    // The link is scaled by `small` about its right edge, centred on its row.
+    to: marks.map((m) => [
+      -small * (link.offsetWidth - m.offsetLeft - m.offsetWidth / 2),
+      link.offsetTop + link.offsetHeight / 2,
+    ]),
+    initials: letters.flatMap((l, k) => (l.hasAttribute("data-initial") ? [k] : [])),
+    scale: (small * parseFloat(getComputedStyle(link).fontSize)) / parseFloat(getComputedStyle(letters[0]).fontSize),
+  };
+}
+
 export function SectionIndex() {
   const root = useRef<HTMLDivElement>(null);
   const discrete = !!useReducedMotion();
@@ -228,8 +353,14 @@ export function SectionIndex() {
   const geometry = useMotionValue<Geometry | null>(null);
   const [current, setCurrent] = useState(-1);
 
+  // While the hero name's copy is in flight (scrolled at all, lg+, motion allowed), the hero's own letters
+  // hide (globals.css `wordmark:`). Set in the same frame as the scroll that moves the copy.
+  const swap = (y: number, g: Geometry | null) =>
+    document.documentElement.toggleAttribute("data-wordmark", !discrete && !!g?.wordmark && y > 0);
+
   useMotionValueEvent(scrollY, "change", (y) => {
     const g = geometry.get();
+    swap(y, g);
     if (g) setCurrent(dockedIndex(y, g));
   });
 
@@ -242,9 +373,11 @@ export function SectionIndex() {
       const contentRight = container
         ? container.getBoundingClientRect().right - parseFloat(getComputedStyle(container).paddingRight)
         : Infinity;
-      const titles = [...(root.current?.querySelectorAll("a") ?? [])];
+      const titles = [...(root.current?.querySelectorAll<HTMLElement>("a[data-title]") ?? [])];
       const widths = titles.map((a) => a.offsetWidth);
-      const margin = document.documentElement.clientWidth - rem * LINE - contentRight;
+      const anchor = document.documentElement.clientWidth - rem * LINE; // the right-14 line, viewport x
+      const margin = anchor - contentRight;
+      const small = Math.min(SMALL, (margin - rem * ROOM) / Math.max(...widths));
       const g: Geometry = {
         rem,
         height: window.innerHeight,
@@ -256,10 +389,12 @@ export function SectionIndex() {
         ),
         line: titles[0]?.offsetHeight ?? rem * BIG,
         margin,
-        small: Math.min(SMALL, (margin - rem * ROOM) / Math.max(...widths)),
+        small,
         tone: interpolate([0, 1], [css.getPropertyValue("--text-muted").trim(), css.getPropertyValue("--text").trim()]),
+        wordmark: measureWordmark(anchor, small, root.current),
       };
       geometry.set(g);
+      swap(window.scrollY, g);
       setCurrent(dockedIndex(window.scrollY, g));
     };
     measure();
@@ -270,11 +405,27 @@ export function SectionIndex() {
     return () => {
       resize.disconnect();
       window.removeEventListener("resize", measure);
+      document.documentElement.removeAttribute("data-wordmark");
     };
-  }, [geometry]);
+    // swap reads `discrete`: re-measuring when reduced motion toggles also re-syncs the hero letters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geometry, discrete]);
 
   return (
     <>
+      {/* Frosted corners behind the passed stack + dock and the upcoming stack (DESIGN.MD §4): content
+          passing under them blurs, so the titles stay legible over anything. The bottom one fades out once
+          the last section docks and nothing waits there, so it never blurs the footer. */}
+      <div
+        aria-hidden
+        className="scrim-top pointer-events-none fixed top-0 right-0 z-20 hidden w-md bg-bg/80 backdrop-blur-sm lg:block"
+        style={{ height: `${RAIL_TOP}rem` }}
+      />
+      <div
+        aria-hidden
+        className={`scrim-bottom pointer-events-none fixed right-0 bottom-0 z-20 hidden w-sm bg-bg/80 backdrop-blur-sm transition-opacity duration-200 lg:block ${current < n - 1 ? "opacity-100" : "opacity-0"}`}
+        style={{ height: `${RAIL_BOTTOM + 2 * ROW}rem` }}
+      />
       <ScrollRuler />
       <div ref={root} className="pointer-events-none fixed inset-y-0 right-14 z-30 hidden lg:block">
         {/* The docked section's eyebrow number, rolling like an odometer. Decorative: the titles are the links. */}
@@ -285,6 +436,7 @@ export function SectionIndex() {
         >
           <Odometer digits={String(Math.max(current, 0) + 1).padStart(2, "0")} />
         </p>
+        <Wordmark scroll={scrollY} geometry={geometry} discrete={discrete} />
         {visibleSections.map(({ id, label }, i) => (
           <Title
             key={id}

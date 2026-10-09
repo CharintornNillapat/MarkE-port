@@ -1,4 +1,4 @@
-import type { Variants } from "framer-motion";
+import type { MotionProps, Variants } from "framer-motion";
 
 // DESIGN.MD §6 entrance. Spread `reveal` on a group and `revealItem` on each child: the group fires once
 // when its top passes 90% of the viewport and starts its items 60ms apart (last of 4 ends at 580ms).
@@ -30,5 +30,28 @@ export const revealLine = {
   } satisfies Variants,
 };
 
-// DESIGN.MD §6 spring for pointer-driven motion (tilt, magnetic CTAs).
+// DESIGN.MD §6 hero intro, once on load: the CN mark shows alone, the name's letters rise in, then the
+// rest of the hero fades up, `INTRO_REST` + 80ms per item. Reduced motion keeps only the fades.
+export const INTRO_MARK: MotionProps = {
+  initial: { opacity: 0, scale: 0.9 },
+  animate: { opacity: [0, 1, 1, 0], scale: [0.9, 1, 1, 1.05] },
+  transition: { duration: 1.1, times: [0, 0.3, 0.7, 1], ease: "easeInOut" },
+};
+
+export const introLetter = (k: number) => ({
+  "data-reveal": "",
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { delay: 0.75 + k * 0.025, duration: 0.5, ease: [0.2, 0.9, 0.2, 1] },
+}) as const;
+
+const INTRO_REST = 1.2;
+export const introItem = (i: number) => ({
+  "data-reveal": "",
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  transition: { delay: INTRO_REST + i * 0.08, duration: 0.4, ease: "easeOut" },
+}) as const;
+
+// DESIGN.MD §6 spring for pointer-driven motion (magnetic CTAs).
 export const spring = { stiffness: 150, damping: 20 };

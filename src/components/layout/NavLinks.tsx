@@ -23,7 +23,7 @@ export function NavLinks({ className, linkClassName, onNavigate }: Props) {
             onClick={onNavigate}
             className={cn(
               // Not transition-colors: it would also fade the focus ring's outline-color in over 150ms.
-              "text-text-muted transition-[color,background-color] duration-150 hover:text-text aria-[current=true]:text-accent",
+              "text-text-muted transition-[color,background-color] duration-150 hover:bg-text hover:text-bg aria-[current=true]:text-accent",
               linkClassName,
             )}
           >

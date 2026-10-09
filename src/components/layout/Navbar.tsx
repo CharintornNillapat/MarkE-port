@@ -21,7 +21,9 @@ export function Navbar() {
         />
         <div className="ml-auto flex items-center gap-1 md:ml-0">
           <Magnetic>
-            <Button href={ui.nav.cta.href}>{ui.nav.cta.label}</Button>
+            <Button href={ui.nav.cta.href} className="rounded-full">
+              {ui.nav.cta.label}
+            </Button>
           </Magnetic>
           <div className="md:hidden">
             <MobileMenu />

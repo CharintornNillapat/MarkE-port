@@ -5,6 +5,8 @@
    from the shadcn package's tailwind.css; Tailwind's built-in data-open: would look for [data-open]. */
 @custom-variant data-open (&:where([data-state="open"]));
 @custom-variant data-closed (&:where([data-state="closed"]));
+/* Set on <html> by the section index while its copy of the hero name is flying (DESIGN.MD §6). */
+@custom-variant wordmark (:where([data-wordmark]) &);
 
 /* DESIGN.MD §2 — the only colors on the site. */
 :root {
@@ -38,7 +40,9 @@
 
   /* DESIGN.MD §3 — Geist has no Thai glyphs, so Noto Sans Thai sits right after it. */
   --font-sans: var(--font-geist-sans), var(--font-noto-thai), Inter, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;}
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+}
 
 /* DESIGN.MD §2 tracker gutter (lg+): container right padding that keeps an 8rem strip free for the scroll
    tracker. Full 8rem at 1024px, easing to the normal 1.5rem once the centred margin is wide enough (~1360px). */
@@ -55,7 +59,15 @@
   --text-2xs--line-height: 1;
   --shadow-glow: 0 0 6px var(--accent);
 
+  --animate-marquee: marquee 36s linear infinite;
   --animate-aurora-1: aurora-1 22s ease-in-out infinite alternate;
+
+  /* Two identical copies side by side: sliding by one copy's width loops seamlessly. */
+  @keyframes marquee {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
   --animate-aurora-2: aurora-2 18s ease-in-out infinite alternate;
   --animate-aurora-3: aurora-3 25s ease-in-out infinite alternate;
 
@@ -94,6 +106,20 @@
    The field fades out toward the hero's bottom edge so the clipped orbs never leave a seam. */
 @utility aurora-field {
   mask-image: linear-gradient(black 55%, transparent);
+}
+
+/* DESIGN.MD §4 tracker scrims: frosted corners behind the section index, fading out from the corner.
+   The mask's `black` is alpha only. */
+@utility scrim-top {
+  mask-image: radial-gradient(100% 100% at 100% 0%, black 40%, transparent);
+}
+@utility scrim-bottom {
+  mask-image: radial-gradient(100% 100% at 100% 100%, black 40%, transparent);
+}
+
+/* DESIGN.MD §5 marquee: fades in and out at the strip's ends. */
+@utility marquee-fade {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 @utility aurora-orb {

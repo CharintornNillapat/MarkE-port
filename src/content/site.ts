@@ -32,6 +32,7 @@ export type Section = {
   id: "work" | "experience" | "stack" | "contact";
   label: string;
   heading: string;
+  accent: string; // the heading word set in italic serif (CONTEXT.md §UI Labels)
 };
 
 const GITHUB_URL = "https://github.com/CharintornNillapat";
@@ -176,10 +177,10 @@ export const seo = {
 
 // DESIGN.MD §5 order. Eyebrow numbers (`01 / WORK`) are assigned to the sections actually rendered.
 const sections: Section[] = [
-  { id: "work", label: "Work", heading: "Selected Work & Engineering Projects" },
-  { id: "experience", label: "Experience", heading: "Work Experience" },
-  { id: "stack", label: "Stack", heading: "Technical Capabilities & Stack" },
-  { id: "contact", label: "Contact", heading: "Get in Touch" },
+  { id: "work", label: "Work", heading: "Selected Work & Engineering Projects", accent: "Engineering" },
+  { id: "experience", label: "Experience", heading: "Work Experience", accent: "Experience" },
+  { id: "stack", label: "Stack", heading: "Technical Capabilities & Stack", accent: "Capabilities" },
+  { id: "contact", label: "Contact", heading: "Get in Touch", accent: "Touch" },
 ];
 
 // CONTEXT.md §UI Labels.
@@ -194,6 +195,7 @@ export const ui = {
   copy: { email: "Copy email", github: "Copy GitHub profile link", done: "Copied", failed: "Copy failed" },
   contact: {
     heading: "Let's Build Something Together",
+    accent: "Together",
     line: "Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out.",
     open: "Open link",
   },

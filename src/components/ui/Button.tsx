@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const variants = {
   primary: "bg-text text-bg hover:opacity-90",
-  secondary: "border border-border text-text hover:border-border-strong hover:bg-surface-2",
+  secondary: "border border-border text-text hover:border-text hover:bg-text hover:text-bg",
 };
 
 type Variant = keyof typeof variants;
@@ -12,7 +12,7 @@ type Variant = keyof typeof variants;
 // `group` + the svg transition let arrow icons nudge 2px on hover (DESIGN.MD §6); each icon sets its direction.
 export const buttonClass = (variant: Variant, className?: string) =>
   cn(
-    "group inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-medium transition-[color,background-color,border-color,opacity] duration-150 md:h-10 [&_svg]:size-4 [&_svg]:shrink-0 motion-safe:[&_svg]:transition-transform",
+    "group inline-flex h-11 items-center justify-center gap-2 px-4 text-sm font-medium transition-[color,background-color,border-color,opacity] duration-150 md:h-10 [&_svg]:size-4 [&_svg]:shrink-0 motion-safe:[&_svg]:transition-transform",
     variants[variant],
     className,
   );

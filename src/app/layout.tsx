@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MotionConfig } from "framer-motion";
-import { Geist, Geist_Mono, Noto_Sans_Thai } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif, Noto_Sans_Thai } from "next/font/google";
 import { seo } from "@/content/site";
 import "./globals.css";
 
@@ -12,6 +12,14 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// DESIGN.MD §3 accent words: one italic serif word per heading.
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
 });
 
 // Only the Thai name needs it; unicode-range loads it on demand, so skip the preload.
@@ -34,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${notoSansThai.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${notoSansThai.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg font-sans text-text">
         {/* Entrance items render hidden until framer-motion runs; without JS they'd stay hidden. */}

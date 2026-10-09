@@ -2,9 +2,8 @@ import * as motion from "framer-motion/client";
 import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Card, CardStrip } from "@/components/ui/Card";
 import { GithubIcon } from "@/components/ui/icons";
-import { Tilt } from "@/components/ui/Tilt";
 import { projects, ui, type Project } from "@/content/site";
 import { reveal, revealItem } from "@/lib/motion";
 
@@ -14,25 +13,27 @@ const lgSpans = ["lg:col-span-3", "lg:col-span-3", "lg:col-span-4", "lg:col-span
 
 export function Work() {
   return (
-    <motion.ul {...reveal} className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+    // Blueprint grid (DESIGN.MD §5): no gaps, cells share 1px lines (each draws its right and bottom
+    // edge, the list its top and left).
+    <motion.ul {...reveal} className="mt-10 grid border-t border-l border-border md:grid-cols-2 lg:grid-cols-6">
       {projects.map((project, i) => (
-        <motion.li {...revealItem} key={project.title} className={lgSpans[i]}>
-          <ProjectCard project={project} />
+        <motion.li {...revealItem} key={project.title} className={`border-r border-b border-border ${lgSpans[i]}`}>
+          <ProjectCard project={project} index={i + 1} />
         </motion.li>
       ))}
     </motion.ul>
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project, index }: { project: Project; index: number }) {
   const { title, category, featured, oneLiner, description, highlight, stack, demo, repo } = project;
 
-  const card = (
-    <Card className="flex h-full flex-col">
+  return (
+    <Card className="flex h-full flex-col border-0">
       {/* Featured cards: a light travels round the border (off for reduced motion, DESIGN.MD §6). */}
       {featured && <span aria-hidden className="border-beam" />}
-      <p className="font-mono text-xs uppercase tracking-widest text-text-muted">{category}</p>
-      <h3 className="mt-3 text-lg font-medium text-text">{title}</h3>
+      <CardStrip label={category} index={index} />
+      <h3 className="text-lg font-medium text-text">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-text-muted">{oneLiner}</p>
       {featured && (
         <p className="mt-3 hidden text-sm leading-relaxed text-text-muted lg:block">{description}</p>
@@ -74,7 +75,4 @@ function ProjectCard({ project }: { project: Project }) {
       )}
     </Card>
   );
-
-  // Featured cards also lean toward the mouse.
-  return featured ? <Tilt className="h-full">{card}</Tilt> : card;
 }

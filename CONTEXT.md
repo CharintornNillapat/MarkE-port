@@ -149,6 +149,20 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.notFound.line` | This page doesn't exist. | 404 page short line |
 | `ui.notFound.back` | Back to home → `/` | 404 page button |
 
+**Accent words** (set in italic serif inside their heading; the text itself is unchanged):
+
+| Heading | Accent word |
+|---|---|
+| Selected Work & Engineering Projects | Engineering |
+| Work Experience | Experience |
+| Technical Capabilities & Stack | Capabilities |
+| Get in Touch | Touch |
+| Let's Build Something Together | Together |
+
+**Marquee** (strip under the hero): every item from §Skills, in table order. Decorative; the Stack section lists them for real.
+
+**Wordmark in the section index** (lg+): the hero name's letters fly into the top of the index and land as the Logo / initials `CN`, a link to `#top`.
+
 Eyebrow numbers count only the sections actually rendered. Footer reads `© {current year} {Name (EN)}` (no extra label).
 
 ---

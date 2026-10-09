@@ -7,7 +7,7 @@ import { ui } from "@/content/site";
 import { NavLinks } from "./NavLinks";
 
 const iconButton =
-  "inline-flex size-11 items-center justify-center rounded-[10px] text-text-muted transition-[color,background-color] duration-150 hover:bg-surface-2 hover:text-text";
+  "inline-flex size-11 items-center justify-center text-text-muted transition-[color,background-color] duration-150 hover:bg-text hover:text-bg";
 
 // Radix Dialog gives focus trap, Esc/overlay close and focus return to the trigger.
 export function MobileMenu() {
@@ -35,7 +35,7 @@ export function MobileMenu() {
           </div>
           <NavLinks
             className="flex flex-col gap-1"
-            linkClassName="flex min-h-11 items-center rounded-[10px] px-3 text-base hover:bg-surface-2"
+            linkClassName="flex min-h-11 items-center px-3 text-base"
             onNavigate={() => setOpen(false)}
           />
         </Dialog.Content>

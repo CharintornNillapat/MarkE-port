@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import * as motion from "framer-motion/client";
 import { ExternalLink, Mail } from "lucide-react";
+import { Accent } from "@/components/ui/Accent";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CopyButton } from "@/components/ui/CopyButton";
@@ -22,7 +23,9 @@ export function Contact() {
     // A single item: it triggers itself and fades up as one piece (revealItem's variants replace the group's).
     <motion.div {...reveal} {...revealItem} className="mt-10">
       <Card>
-        <h3 className="text-lg font-medium text-text">{ui.contact.heading}</h3>
+        <h3 className="text-lg font-medium text-text">
+          <Accent text={ui.contact.heading} word={ui.contact.accent} />
+        </h3>
         <p className="mt-2 text-sm leading-relaxed text-text-muted">{ui.contact.line}</p>
         <ul className="mt-6 divide-y divide-border border-t border-border">
           {contact.map(({ label, display, href }) => {
