@@ -20,6 +20,8 @@ Project facts below were verified against each repo's README (Oct 2026). If a re
 | Location | Thailand |
 | Availability | Open to opportunities & freelance work |
 
+Name (TH), Education and Location are reference data: the site has no section that shows them (DESIGN.MD §5), so `site.ts` leaves them out. Add them there if a section is ever designed for them.
+
 ## Contact
 
 | Channel | Display text | Link |
@@ -42,6 +44,8 @@ No phone number on the site.
 - **Secondary CTA:** GitHub Profile → GitHub link
 
 ## About (short bio)
+
+Not rendered: DESIGN.MD §5 has no About section, so `site.ts` leaves it out. Kept here as the approved wording if one is added.
 
 Computer Engineering graduate who builds full-stack web applications and applied AI / computer-vision systems. I care about the unglamorous parts that make software trustworthy: atomic data writes, reproducible experiments, tests, and pipelines that fail safely.
 
@@ -128,11 +132,11 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.sections` · experience | Experience | Navbar link · eyebrow — hidden while Experience is empty |
 | `ui.sections` · stack | Stack | Navbar link · eyebrow |
 | `ui.sections` · contact | Contact | Navbar link · eyebrow |
-| `ui.sections` · work · heading | Selected Work & Engineering Projects | Section H2 |
+| `ui.sections` · work · heading | Selected Engineering Projects | Section H2 |
 | `ui.sections` · experience · heading | Work Experience | Section H2 — hidden while Experience is empty |
-| `ui.sections` · stack · heading | Technical Capabilities & Stack | Section H2 |
+| `ui.sections` · stack · heading | Languages & Tools | Section H2 |
 | `ui.sections` · contact · heading | Get in Touch | Section H2 |
-| `ui.nav.cta` | Get in Touch → `#contact` | Navbar primary button |
+| `ui.nav.cta` | Hire Mark → `#contact` | Navbar primary button |
 | `ui.nav.menu` | Menu | Mobile menu button label · drawer title |
 | `ui.nav.close` | Close menu | Mobile drawer close button label |
 | `ui.project.demo` | Live | Project card link (demo) |
@@ -142,21 +146,18 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.copy.done` | Copied | CopyButton live announcement |
 | `ui.copy.failed` | Copy failed | CopyButton live announcement when the clipboard write is blocked |
 | `ui.contact.heading` | Let's Build Something Together | Contact card heading |
-| `ui.contact.line` | Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out. | Contact card short line |
-| `ui.contact.open` | Open link | Open-link button labels in contact rows |
+| `ui.contact.line` | Open to engineering roles and freelance projects. Send an email or find me on GitHub. | Contact card short line |
+| `ui.contact.open` · email | Send email | Open button, email row (`mailto:`) |
+| `ui.contact.open` · github | Open GitHub profile | Open button, GitHub row |
 | `ui.notFound.code` | 404 | 404 page eyebrow |
 | `ui.notFound.title` | Page not found | 404 page H1 · tab title |
 | `ui.notFound.line` | This page doesn't exist. | 404 page short line |
 | `ui.notFound.back` | Back to home → `/` | 404 page button |
 
-**Accent words** (set in italic serif inside their heading; the text itself is unchanged):
+**Accent word** (set in italic serif inside its heading; the text itself is unchanged). Only one heading has one:
 
 | Heading | Accent word |
 |---|---|
-| Selected Work & Engineering Projects | Engineering |
-| Work Experience | Experience |
-| Technical Capabilities & Stack | Capabilities |
-| Get in Touch | Touch |
 | Let's Build Something Together | Together |
 
 **Marquee** (strip under the hero): every item from §Skills, in table order. Decorative; the Stack section lists them for real.

@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 
 const variants = {
   primary: "bg-text text-bg hover:opacity-90",
-  secondary: "border border-border text-text hover:border-text hover:bg-text hover:text-bg",
+  // border-text-subtle: a control's edge needs 3:1 against the page (--border is 1.18:1).
+  secondary: "border border-text-subtle text-text hover:border-text hover:bg-text hover:text-bg",
 };
 
 type Variant = keyof typeof variants;

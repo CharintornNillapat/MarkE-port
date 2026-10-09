@@ -1,4 +1,4 @@
-// DESIGN.MD §3: a heading with one word (CONTEXT.md §UI Labels, accent words) set in italic serif.
+// DESIGN.MD §3: the one heading on the site (Contact card) with a word set in italic serif.
 export function Accent({ text, word }: { text: string; word: string }) {
   const i = text.indexOf(word);
   if (i < 0) return text;

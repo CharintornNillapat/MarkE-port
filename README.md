@@ -10,7 +10,7 @@ Single-page portfolio and contact hub, with a dark "studio" look.
 - Tailwind CSS 4 (design tokens in `src/app/globals.css`)
 - Radix UI (mobile menu) · lucide-react (icons) · Framer Motion (entrance, springs, section index)
 - three.js (hero constellation; lazy-loaded, never for reduced motion)
-- Fonts: Geist, Geist Mono, Noto Sans Thai via `next/font`
+- Fonts: Geist, Geist Mono, Instrument Serif (one accent word) via `next/font`
 - Deployed on Vercel from `main`
 
 ## Development

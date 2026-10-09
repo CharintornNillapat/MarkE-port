@@ -13,9 +13,9 @@ type Icon = ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
 
 // Icon and copy label per channel, keyed by label like the Footer's GitHub lookup.
 // A new channel in site.ts needs an entry here, or the build fails while prerendering.
-const channelUi: Record<string, { Icon: Icon; copy: string }> = {
-  Email: { Icon: Mail, copy: ui.copy.email },
-  GitHub: { Icon: GithubIcon, copy: ui.copy.github },
+const channelUi: Record<string, { Icon: Icon; copy: string; open: string }> = {
+  Email: { Icon: Mail, copy: ui.copy.email, open: ui.contact.open.email },
+  GitHub: { Icon: GithubIcon, copy: ui.copy.github, open: ui.contact.open.github },
 };
 
 export function Contact() {
@@ -29,7 +29,7 @@ export function Contact() {
         <p className="mt-2 text-sm leading-relaxed text-text-muted">{ui.contact.line}</p>
         <ul className="mt-6 divide-y divide-border border-t border-border">
           {contact.map(({ label, display, href }) => {
-            const { Icon, copy } = channelUi[label];
+            const { Icon, copy, open } = channelUi[label];
 
             return (
               <li
@@ -48,8 +48,7 @@ export function Contact() {
                       aria-hidden
                       className="motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
                     />
-                    {ui.contact.open}
-                    <span className="sr-only"> {label}</span>
+                    {open}
                   </Button>
                 </div>
               </li>

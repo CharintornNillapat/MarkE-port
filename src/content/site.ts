@@ -32,19 +32,15 @@ export type Section = {
   id: "work" | "experience" | "stack" | "contact";
   label: string;
   heading: string;
-  accent: string; // the heading word set in italic serif (CONTEXT.md §UI Labels)
 };
 
 const GITHUB_URL = "https://github.com/CharintornNillapat";
 
 export const identity = {
   name: "Charintorn Nillapat",
-  nameTh: "ชรินทร นิลพัตร์",
   nickname: "Mark",
   logo: "MARK",
   role: "Software Engineer, Full-Stack & AI",
-  education: "B.Eng. Computer Engineering (วศ.บ. วิศวกรรมคอมพิวเตอร์)",
-  location: "Thailand",
   availability: "Open to opportunities & freelance work",
 };
 
@@ -65,9 +61,6 @@ export const hero = {
   primaryCta: { label: "View Projects", href: "#work" } satisfies Link,
   secondaryCta: { label: "GitHub Profile", href: GITHUB_URL } satisfies Link,
 };
-
-export const about =
-  "Computer Engineering graduate who builds full-stack web applications and applied AI / computer-vision systems. I care about the unglamorous parts that make software trustworthy: atomic data writes, reproducible experiments, tests, and pipelines that fail safely.";
 
 export const projects: Project[] = [
   {
@@ -178,16 +171,16 @@ export const seo = {
 
 // DESIGN.MD §5 order. Eyebrow numbers (`01 / WORK`) are assigned to the sections actually rendered.
 const sections: Section[] = [
-  { id: "work", label: "Work", heading: "Selected Work & Engineering Projects", accent: "Engineering" },
-  { id: "experience", label: "Experience", heading: "Work Experience", accent: "Experience" },
-  { id: "stack", label: "Stack", heading: "Technical Capabilities & Stack", accent: "Capabilities" },
-  { id: "contact", label: "Contact", heading: "Get in Touch", accent: "Touch" },
+  { id: "work", label: "Work", heading: "Selected Engineering Projects" },
+  { id: "experience", label: "Experience", heading: "Work Experience" },
+  { id: "stack", label: "Stack", heading: "Languages & Tools" },
+  { id: "contact", label: "Contact", heading: "Get in Touch" },
 ];
 
 // CONTEXT.md §UI Labels.
 export const ui = {
   nav: {
-    cta: { label: "Get in Touch", href: "#contact" } satisfies Link,
+    cta: { label: "Hire Mark", href: "#contact" } satisfies Link,
     menu: "Menu",
     close: "Close menu",
   },
@@ -197,8 +190,8 @@ export const ui = {
   contact: {
     heading: "Let's Build Something Together",
     accent: "Together",
-    line: "Whether you have an engineering role, a project inquiry, or just want to connect, feel free to reach out.",
-    open: "Open link",
+    line: "Open to engineering roles and freelance projects. Send an email or find me on GitHub.",
+    open: { email: "Send email", github: "Open GitHub profile" },
   },
   notFound: {
     code: "404",

@@ -1,12 +1,11 @@
 import type { ReactNode } from "react";
 import * as motion from "framer-motion/client";
-import { Accent } from "@/components/ui/Accent";
 import type { Section as SectionData } from "@/content/site";
 import { reveal, revealItem, revealLine } from "@/lib/motion";
 
 type Props = SectionData & { number: number; children?: ReactNode };
 
-export function Section({ id, label, heading, accent, number, children }: Props) {
+export function Section({ id, label, heading, number, children }: Props) {
   const headingId = `${id}-heading`;
 
   return (
@@ -31,7 +30,7 @@ export function Section({ id, label, heading, accent, number, children }: Props)
           id={headingId}
           className="text-3xl font-semibold tracking-tight sm:text-4xl"
         >
-          <Accent text={heading} word={accent} />
+          {heading}
         </motion.h2>
         {children}
       </div>

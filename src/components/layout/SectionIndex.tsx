@@ -350,7 +350,7 @@ function measureWordmark(anchor: number, small: number, root: HTMLElement | null
 }
 
 export function SectionIndex() {
-  const root = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLElement>(null);
   const discrete = !!useReducedMotion();
   const { scrollY } = useScroll();
   const geometry = useMotionValue<Geometry | null>(null);
@@ -416,21 +416,26 @@ export function SectionIndex() {
 
   return (
     <>
-      {/* Frosted corners behind the passed stack + dock and the upcoming stack (DESIGN.MD §4): content
-          passing under them blurs, so the titles stay legible over anything. The bottom one fades out once
-          the last section docks and nothing waits there, so it never blurs the footer. */}
+      {/* Scrims behind the passed stack + dock and the upcoming stack (DESIGN.MD §4): an 80% --bg wash
+          fading out from the corner keeps the titles legible over anything (no blur: DESIGN.MD §4 caps
+          backdrop blur at the navbar and the section bar). The bottom one fades out once the last section
+          docks and nothing waits there, so it never dims the footer. */}
       <div
         aria-hidden
-        className="scrim-top pointer-events-none fixed top-0 right-0 z-20 hidden w-md bg-bg/80 backdrop-blur-sm lg:block"
+        className="scrim-top pointer-events-none fixed top-0 right-0 z-20 hidden w-md bg-bg/80 lg:block"
         style={{ height: `${RAIL_TOP}rem` }}
       />
       <div
         aria-hidden
-        className={`scrim-bottom pointer-events-none fixed right-0 bottom-0 z-20 hidden w-sm bg-bg/80 backdrop-blur-sm transition-opacity duration-200 lg:block ${current < n - 1 ? "opacity-100" : "opacity-0"}`}
+        className={`scrim-bottom pointer-events-none fixed right-0 bottom-0 z-20 hidden w-sm bg-bg/80 transition-opacity duration-200 lg:block ${current < n - 1 ? "opacity-100" : "opacity-0"}`}
         style={{ height: `${RAIL_BOTTOM + 2 * ROW}rem` }}
       />
       <ScrollRuler />
-      <div ref={root} className="pointer-events-none fixed inset-y-0 right-14 z-30 hidden lg:block">
+      <nav
+        ref={root}
+        aria-label="Sections"
+        className="pointer-events-none fixed inset-y-0 right-14 z-30 hidden lg:block"
+      >
         {/* The docked section's eyebrow number, rolling like an odometer. Decorative: the titles are the links. */}
         <p
           aria-hidden
@@ -452,7 +457,7 @@ export function SectionIndex() {
             discrete={discrete}
           />
         ))}
-      </div>
+      </nav>
     </>
   );
 }

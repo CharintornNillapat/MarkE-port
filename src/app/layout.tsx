@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MotionConfig } from "framer-motion";
-import { Geist, Geist_Mono, Instrument_Serif, Noto_Sans_Thai } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { seo } from "@/content/site";
 import "./globals.css";
 
@@ -14,19 +14,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// DESIGN.MD §3 accent words: one italic serif word per heading.
+// DESIGN.MD §3 accent word: the one italic serif word, in the Contact card heading.
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   subsets: ["latin"],
   weight: "400",
   style: "italic",
-});
-
-// Only the Thai name needs it; unicode-range loads it on demand, so skip the preload.
-const notoSansThai = Noto_Sans_Thai({
-  variable: "--font-noto-thai",
-  subsets: ["thai"],
-  preload: false,
 });
 
 // CONTEXT.md §SEO. OG image is TODO there, so link previews get title + description only.
@@ -42,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${notoSansThai.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg font-sans text-text">
         {/* Entrance items render hidden until framer-motion runs; without JS they'd stay hidden. */}
