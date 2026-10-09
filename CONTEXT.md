@@ -154,15 +154,9 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 | `ui.notFound.line` | This page doesn't exist. | 404 page short line |
 | `ui.notFound.back` | Back to home → `/` | 404 page button |
 
-**Accent word** (set in italic serif inside its heading; the text itself is unchanged). Only one heading has one:
-
-| Heading | Accent word |
-|---|---|
-| Let's Build Something Together | Together |
-
 **Marquee** (strip under the hero): every item from §Skills, in table order. Decorative; the Stack section lists them for real.
 
-**Wordmark in the section index** (lg+): the hero wordmark's letters fly into the top of the index; its first word, `MARK`, lands as the Logo, a link to `#top`; the rest scatters and fades.
+**Logo in the section index** (lg+): the top of the index is the Logo, `MARK`, a link to `#top`; it appears once the hero wordmark has scrolled off.
 
 Eyebrow numbers count only the sections actually rendered. Footer reads `© {current year} {Name (EN)}` (no extra label).
 

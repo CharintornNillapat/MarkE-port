@@ -9,8 +9,8 @@ Single-page portfolio and contact hub, with a dark "studio" look.
 - Next.js 16 (App Router, Cache Components) · React 19 · TypeScript (strict)
 - Tailwind CSS 4 (design tokens in `src/app/globals.css`)
 - Radix UI (mobile menu) · lucide-react (icons) · Framer Motion (entrance, springs, section index)
-- three.js (hero constellation; lazy-loaded, never for reduced motion)
-- Fonts: Geist, Geist Mono, Instrument Serif (one accent word) via `next/font`
+- Canvas 2D hero constellation (lazy-loaded, never for reduced motion)
+- Fonts: Geist, Geist Mono via `next/font`
 - Deployed on Vercel from `main`
 
 ## Development

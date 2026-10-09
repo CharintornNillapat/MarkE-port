@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-// DESIGN.MD §6 hero constellation. three.js is fetched only when motion is allowed, and the scene
-// (WebGL context included) is torn down as soon as reduced motion turns on, or on unmount.
+// DESIGN.MD §6 hero constellation. The canvas code is fetched only when motion is allowed, and the scene
+// is torn down as soon as reduced motion turns on, or on unmount.
 export function HeroCanvas() {
   const ref = useRef<HTMLDivElement>(null);
 

@@ -32,9 +32,9 @@ export function Hero() {
       {/* Aurora: three --glow orbs drifting on 18–25s loops (transform only); still when motion is reduced.
           The WebGL constellation sits on top of them and shares the field's bottom fade. */}
       <div aria-hidden className="aurora-field pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <span className="aurora-orb -top-48 left-1/4 motion-safe:animate-aurora-1" />
-        <span className="aurora-orb top-0 -right-24 motion-safe:animate-aurora-2" />
-        <span className="aurora-orb top-1/4 -left-40 motion-safe:animate-aurora-3" />
+        <span className="aurora-orb -top-48 left-1/4 [--dx:6rem] [--dy:3rem] [--s:1.1] motion-safe:animate-aurora-1" />
+        <span className="aurora-orb top-0 -right-24 [--dx:-5rem] [--dy:4rem] [--s:0.9] motion-safe:animate-aurora-2" />
+        <span className="aurora-orb top-1/4 -left-40 [--dx:3rem] [--dy:-4rem] [--s:1.15] motion-safe:animate-aurora-3" />
         <HeroCanvas />
       </div>
       <div aria-hidden className="hero-backdrop pointer-events-none absolute inset-0 -z-10" />
@@ -44,11 +44,10 @@ export function Hero() {
         <motion.div {...introItem(0)}>
           <StatusPill label={hero.status} />
         </motion.div>
-        {/* One span per letter (data-letter): they rise in on load, and from lg the section index flies
-            copies of them into its top row (DESIGN.MD §6), hiding these while it does (wordmark:). */}
+        {/* One span per letter: they rise in on load (DESIGN.MD §6 hero intro). */}
         <h1
           id="top-heading"
-          className="relative mt-8 text-5xl leading-[0.9] font-bold tracking-tight text-balance text-text uppercase sm:text-7xl lg:text-8xl lg:wordmark:text-transparent"
+          className="relative mt-8 text-5xl leading-[0.9] font-bold tracking-tight text-balance text-text uppercase sm:text-7xl lg:text-8xl"
         >
           <span className="sr-only">{hero.wordmark}</span>
           <motion.span
@@ -63,12 +62,7 @@ export function Hero() {
               {w > 0 && " "}
               <span aria-hidden className="inline-block whitespace-nowrap">
                 {[...word].map((char, k) => (
-                  <motion.span
-                    key={k}
-                    {...introLetter(starts[w] + k)}
-                    data-letter
-                    className="inline-block"
-                  >
+                  <motion.span key={k} {...introLetter(starts[w] + k)} className="inline-block">
                     {char}
                   </motion.span>
                 ))}

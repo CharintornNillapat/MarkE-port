@@ -19,11 +19,11 @@ export function MobileMenu() {
         <Menu className="size-5" aria-hidden />
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-bg/80 duration-200 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
-        {/* Slide only when motion is allowed; reduced motion gets the fade alone. */}
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-bg/80 drawer-overlay" />
+        {/* Slide only when motion is allowed; reduced motion gets the fade alone (globals.css). */}
         <Dialog.Content
           aria-describedby={undefined}
-          className="fixed inset-y-0 right-0 z-50 flex w-3/4 max-w-xs flex-col gap-4 border-l border-border bg-surface p-4 duration-200 data-open:animate-in data-open:fade-in-0 motion-safe:data-open:slide-in-from-right data-closed:animate-out data-closed:fade-out-0 motion-safe:data-closed:slide-out-to-right"
+          className="fixed inset-y-0 right-0 z-50 flex w-3/4 max-w-xs flex-col gap-4 border-l border-border bg-surface p-4 drawer-panel"
         >
           <div className="flex items-center justify-between">
             <Dialog.Title className="pl-3 font-mono text-xs uppercase tracking-widest text-text-muted">

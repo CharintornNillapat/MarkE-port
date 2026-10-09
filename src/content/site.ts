@@ -189,7 +189,6 @@ export const ui = {
   copy: { email: "Copy email", github: "Copy GitHub profile link", done: "Copied", failed: "Copy failed" },
   contact: {
     heading: "Let's Build Something Together",
-    accent: "Together",
     line: "Open to engineering roles and freelance projects. Send an email or find me on GitHub.",
     open: { email: "Send email", github: "Open GitHub profile" },
   },

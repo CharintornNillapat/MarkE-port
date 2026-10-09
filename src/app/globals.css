@@ -1,12 +1,32 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
-/* Radix open/closed state variants for the mobile drawer (MobileMenu). The only rules the site used
-   from the shadcn package's tailwind.css; Tailwind's built-in data-open: would look for [data-open]. */
-@custom-variant data-open (&:where([data-state="open"]));
-@custom-variant data-closed (&:where([data-state="closed"]));
-/* Set on <html> by the section index while its copy of the hero name is flying (DESIGN.MD §6). */
-@custom-variant wordmark (:where([data-wordmark]) &);
+/* Mobile drawer (MobileMenu): Radix keeps a node mounted until its exit animation ends, so opening and
+   closing are both CSS animations (closing plays the same one in reverse). Reduced motion gets the fade alone. */
+@keyframes drawer-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes drawer-slide {
+  from {
+    transform: translateX(100%);
+  }
+}
+@utility drawer-overlay {
+  animation: drawer-fade 200ms both;
+  &[data-state="closed"] {
+    animation-direction: reverse;
+  }
+}
+@utility drawer-panel {
+  animation: drawer-fade 200ms both;
+  @media (prefers-reduced-motion: no-preference) {
+    animation: drawer-fade 200ms both, drawer-slide 200ms both;
+  }
+  &[data-state="closed"] {
+    animation-direction: reverse;
+  }
+}
 
 /* DESIGN.MD §2 — the only colors on the site. */
 :root {
@@ -40,7 +60,6 @@
 
   --font-sans: var(--font-geist-sans), Inter, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-serif: var(--font-instrument-serif), Georgia, serif;
 }
 
 /* DESIGN.MD §2 tracker gutter (lg+): container right padding that keeps an 8rem strip free for the scroll
@@ -59,7 +78,9 @@
   --shadow-glow: 0 0 6px var(--accent);
 
   --animate-marquee: marquee 36s linear infinite;
-  --animate-aurora-1: aurora-1 22s ease-in-out infinite alternate;
+  --animate-aurora-1: aurora 22s ease-in-out infinite alternate;
+  --animate-aurora-2: aurora 18s ease-in-out infinite alternate;
+  --animate-aurora-3: aurora 25s ease-in-out infinite alternate;
 
   /* Two identical copies side by side: sliding by one copy's width loops seamlessly. */
   @keyframes marquee {
@@ -67,22 +88,11 @@
       transform: translate3d(-50%, 0, 0);
     }
   }
-  --animate-aurora-2: aurora-2 18s ease-in-out infinite alternate;
-  --animate-aurora-3: aurora-3 25s ease-in-out infinite alternate;
 
-  @keyframes aurora-1 {
+  /* Each orb sets its own drift: --dx, --dy and --s (Hero). */
+  @keyframes aurora {
     to {
-      transform: translate3d(--spacing(24), --spacing(12), 0) scale(1.1);
-    }
-  }
-  @keyframes aurora-2 {
-    to {
-      transform: translate3d(--spacing(-20), --spacing(16), 0) scale(0.9);
-    }
-  }
-  @keyframes aurora-3 {
-    to {
-      transform: translate3d(--spacing(12), --spacing(-16), 0) scale(1.15);
+      transform: translate3d(var(--dx), var(--dy), 0) scale(var(--s));
     }
   }
 }
@@ -129,6 +139,15 @@
   opacity: 0.04;
 }
 
+/* Keeps only the 1px ring of an element with `padding: 1px`: the border box minus the content box. The
+   masks' `black` is alpha only. Shared by the card spotlight's border light and the border beam. */
+@utility ring-mask {
+  mask:
+    linear-gradient(black 0 0) content-box,
+    linear-gradient(black 0 0);
+  mask-composite: exclude;
+}
+
 /* Registered so CSS can interpolate them: the spotlight glides after the pointer. */
 @property --mouse-x {
   syntax: "<length-percentage>";
@@ -173,10 +192,7 @@
     inset: -1px;
     padding: 1px;
     background: radial-gradient(circle --spacing(48) at var(--mouse-x) var(--mouse-y), var(--accent), transparent);
-    mask:
-      linear-gradient(black 0 0) content-box,
-      linear-gradient(black 0 0);
-    mask-composite: exclude;
+    @apply ring-mask;
   }
 
   [data-glow]:hover::before,
@@ -203,10 +219,7 @@
     pointer-events: none;
     container-type: size;
     overflow: clip; /* the turning square is larger than the ring; the mask hides it but doesn't stop page overflow */
-    mask:
-      linear-gradient(black 0 0) content-box,
-      linear-gradient(black 0 0);
-    mask-composite: exclude;
+    @apply ring-mask;
   }
 
   .border-beam::before {
