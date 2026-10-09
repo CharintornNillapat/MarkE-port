@@ -23,7 +23,7 @@ const keepHyphenatedWords = (text: string) =>
     ),
   );
 
-const words = identity.name.split(" ");
+const words = hero.wordmark.split(" ");
 const starts = words.map((_, w) => words.slice(0, w).join("").length); // index of each word's first letter
 
 export function Hero() {
@@ -50,7 +50,7 @@ export function Hero() {
           id="top-heading"
           className="relative mt-8 text-5xl leading-[0.9] font-bold tracking-tight text-balance text-text uppercase sm:text-7xl lg:text-8xl lg:wordmark:text-transparent"
         >
-          <span className="sr-only">{identity.name}</span>
+          <span className="sr-only">{hero.wordmark}</span>
           <motion.span
             {...INTRO_MARK}
             aria-hidden
@@ -67,7 +67,6 @@ export function Hero() {
                     key={k}
                     {...introLetter(starts[w] + k)}
                     data-letter
-                    data-initial={k === 0 ? "" : undefined}
                     className="inline-block"
                   >
                     {char}

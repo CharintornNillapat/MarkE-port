@@ -14,7 +14,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { Odometer, ScrollRuler } from "@/components/layout/ScrollRuler";
-import { identity, visibleSections } from "@/content/site";
+import { hero, identity, visibleSections } from "@/content/site";
 
 // DESIGN.MD §6 section index (lg+), in the tracker gutter the page containers keep free (pr-tracker),
 // everything right-aligned on the right-14 line, just left of the full-height ScrollRuler lane.
@@ -68,7 +68,6 @@ type Wordmark = {
   fly: number; // scroll px by which every letter has landed: the hero name's bottom edge
   from: [x: number, docY: number, w: number, h: number][]; // each hero letter's centre (y in the document) and size
   to: [x: number, y: number][]; // where each initial lands: its letter in the CN link
-  initials: number[]; // which hero letters are the initials
   scale: number; // hero letter → stacked letter
 };
 
@@ -234,7 +233,12 @@ function Title({ id, label, current, ...props }: Props & { id: string; label: st
   );
 }
 
-const LETTERS = [...identity.name.replace(/\s/g, "")];
+const LETTERS = [...hero.wordmark.replace(/\s/g, "")];
+// The hero letters that land as the CN link: for each initial, the first matching letter after the last.
+const INITIALS: number[] = [];
+for (const c of identity.initials) {
+  INITIALS.push(LETTERS.findIndex((l, k) => k > (INITIALS.at(-1) ?? -1) && l.toUpperCase() === c));
+}
 
 // Letter k's progress 0–1: they all set off with the first scroll and the rightmost (nearest the index)
 // travel fastest, so the name peels away from its right end and every letter lands at `fly`.
@@ -253,7 +257,7 @@ function FlyingLetter({ char, k, scroll, geometry, discrete }: WordmarkProps & {
     if (!w) return "none";
     const [x0, docY, lw, lh] = w.from[k];
     const t = travel(k, y, w);
-    const j = w.initials.indexOf(k);
+    const j = INITIALS.indexOf(k);
     const [x1, y1] = j >= 0 ? w.to[j] : [(w.to[0][0] + w.to[w.to.length - 1][0]) / 2, w.to[0][1]];
     const x = x0 + (x1 - x0) * t;
     const top = docY - y + (y1 - (docY - y)) * t;
@@ -267,7 +271,7 @@ function FlyingLetter({ char, k, scroll, geometry, discrete }: WordmarkProps & {
     const w = geometry.get()?.wordmark;
     // Shown only in flight: at 0 the hero's own letters are in place, from `fly` on the CN link is.
     if (!w || discrete || y <= 0 || y >= w.fly) return 0;
-    return w.initials.includes(k) ? 1 : 1 - Math.min(Math.max((travel(k, y, w) - 0.25) / 0.6, 0), 1);
+    return INITIALS.includes(k) ? 1 : 1 - Math.min(Math.max((travel(k, y, w) - 0.25) / 0.6, 0), 1);
   });
   const color = useTransform(() => {
     const y = scroll.get();
@@ -341,7 +345,6 @@ function measureWordmark(anchor: number, small: number, root: HTMLElement | null
       -small * (link.offsetWidth - m.offsetLeft - m.offsetWidth / 2),
       link.offsetTop + link.offsetHeight / 2,
     ]),
-    initials: letters.flatMap((l, k) => (l.hasAttribute("data-initial") ? [k] : [])),
     scale: (small * parseFloat(getComputedStyle(link).fontSize)) / parseFloat(getComputedStyle(letters[0]).fontSize),
   };
 }
