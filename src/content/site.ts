@@ -41,7 +41,7 @@ export const identity = {
   name: "Charintorn Nillapat",
   nameTh: "ชรินทร นิลพัตร์",
   nickname: "Mark",
-  initials: "CN",
+  logo: "MARK",
   role: "Software Engineer, Full-Stack & AI",
   education: "B.Eng. Computer Engineering (วศ.บ. วิศวกรรมคอมพิวเตอร์)",
   location: "Thailand",

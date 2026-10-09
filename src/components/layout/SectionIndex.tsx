@@ -20,7 +20,7 @@ import { hero, identity, visibleSections } from "@/content/site";
 // everything right-aligned on the right-14 line, just left of the full-height ScrollRuler lane.
 // Titles are set at text-4xl/none bold (2.25rem): full size when docked beneath the
 // navbar, 0.5 on the rail, 1/3 (= 12px) in the stacks. Layout in rem, top to bottom: passed stack
-// (headed by the CN wordmark the hero name flies into) → docked title → section number → rail →
+// (headed by the MARK logo the hero name flies into) → docked title → section number → rail →
 // upcoming stack.
 const n = visibleSections.length;
 const LINE = 3.5; // right-14: 0.5rem clear of the ruler lane (right-2, w-10)
@@ -67,7 +67,7 @@ type Geometry = {
 type Wordmark = {
   fly: number; // scroll px by which every letter has landed: the hero name's bottom edge
   from: [x: number, docY: number, w: number, h: number][]; // each hero letter's centre (y in the document) and size
-  to: [x: number, y: number][]; // where each initial lands: its letter in the CN link
+  to: [x: number, y: number][]; // where each logo letter lands: its letter in the MARK link
   scale: number; // hero letter → stacked letter
 };
 
@@ -234,10 +234,10 @@ function Title({ id, label, current, ...props }: Props & { id: string; label: st
 }
 
 const LETTERS = [...hero.wordmark.replace(/\s/g, "")];
-// The hero letters that land as the CN link: for each initial, the first matching letter after the last.
-const INITIALS: number[] = [];
-for (const c of identity.initials) {
-  INITIALS.push(LETTERS.findIndex((l, k) => k > (INITIALS.at(-1) ?? -1) && l.toUpperCase() === c));
+// The hero letters that land as the MARK link: for each logo letter, the first match after the last.
+const LANDING: number[] = [];
+for (const c of identity.logo) {
+  LANDING.push(LETTERS.findIndex((l, k) => k > (LANDING.at(-1) ?? -1) && l.toUpperCase() === c));
 }
 
 // Letter k's progress 0–1: they all set off with the first scroll and the rightmost (nearest the index)
@@ -248,7 +248,7 @@ const travel = (k: number, y: number, w: Wordmark) =>
 type WordmarkProps = Omit<Props, "i">;
 
 // One hero letter in flight: from its place in the hero name (scrolling with the page) to its initial's
-// place in the CN link, or, for every other letter, toward the link while it shrinks and fades out. Each
+// place in the MARK link, or, for every other letter, toward the link while it shrinks and fades out. Each
 // turns a little mid-flight, so the name scatters rather than slides.
 function FlyingLetter({ char, k, scroll, geometry, discrete }: WordmarkProps & { char: string; k: number }) {
   const transform = useTransform(() => {
@@ -257,7 +257,7 @@ function FlyingLetter({ char, k, scroll, geometry, discrete }: WordmarkProps & {
     if (!w) return "none";
     const [x0, docY, lw, lh] = w.from[k];
     const t = travel(k, y, w);
-    const j = INITIALS.indexOf(k);
+    const j = LANDING.indexOf(k);
     const [x1, y1] = j >= 0 ? w.to[j] : [(w.to[0][0] + w.to[w.to.length - 1][0]) / 2, w.to[0][1]];
     const x = x0 + (x1 - x0) * t;
     const top = docY - y + (y1 - (docY - y)) * t;
@@ -269,9 +269,9 @@ function FlyingLetter({ char, k, scroll, geometry, discrete }: WordmarkProps & {
   const opacity = useTransform(() => {
     const y = scroll.get();
     const w = geometry.get()?.wordmark;
-    // Shown only in flight: at 0 the hero's own letters are in place, from `fly` on the CN link is.
+    // Shown only in flight: at 0 the hero's own letters are in place, from `fly` on the MARK link is.
     if (!w || discrete || y <= 0 || y >= w.fly) return 0;
-    return INITIALS.includes(k) ? 1 : 1 - Math.min(Math.max((travel(k, y, w) - 0.25) / 0.6, 0), 1);
+    return LANDING.includes(k) ? 1 : 1 - Math.min(Math.max((travel(k, y, w) - 0.25) / 0.6, 0), 1);
   });
   const color = useTransform(() => {
     const y = scroll.get();
@@ -289,7 +289,7 @@ function FlyingLetter({ char, k, scroll, geometry, discrete }: WordmarkProps & {
   );
 }
 
-// Top row of the passed stack: the CN wordmark, a link to the top. It takes over from the flying letters
+// Top row of the passed stack: the MARK logo, a link to the top. It takes over from the flying letters
 // once they land (and, without JS or before measuring, simply sits there).
 function Wordmark(props: WordmarkProps) {
   const { scroll, geometry } = props;
@@ -308,8 +308,8 @@ function Wordmark(props: WordmarkProps) {
         className="group pointer-events-auto absolute right-0 origin-right whitespace-nowrap text-4xl/none font-bold uppercase tracking-wider"
         style={{ top: `${EDGE + HALF - BIG / 2}rem`, transform, opacity }}
       >
-        {[...identity.initials].map((char) => (
-          <span key={char} className="inline-block text-text-muted group-hover:text-text">
+        {[...identity.logo].map((char, k) => (
+          <span key={k} className="inline-block text-text-muted group-hover:text-text">
             {char}
           </span>
         ))}
@@ -323,7 +323,7 @@ function Wordmark(props: WordmarkProps) {
   );
 }
 
-// Where the hero name's letters start and where the initials land, or null if the hero isn't there.
+// Where the hero name's letters start and where the logo letters land, or null if the hero isn't there.
 function measureWordmark(anchor: number, small: number, root: HTMLElement | null): Wordmark | null {
   const h1 = document.getElementById("top-heading");
   const link = root?.querySelector<HTMLElement>("[data-wordmark-link]");

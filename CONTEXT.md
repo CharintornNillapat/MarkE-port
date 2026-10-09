@@ -14,7 +14,7 @@ Project facts below were verified against each repo's README (Oct 2026). If a re
 | Name (EN) | Charintorn Nillapat |
 | Name (TH) | ชรินทร นิลพัตร์ |
 | Nickname | Mark |
-| Logo / initials | CN |
+| Logo | MARK (favicon: its first letter, M) |
 | Role | Software Engineer, Full-Stack & AI |
 | Education | B.Eng. Computer Engineering (วศ.บ. วิศวกรรมคอมพิวเตอร์) |
 | Location | Thailand |
@@ -161,7 +161,7 @@ Interface text that isn't page content: nav, buttons, section labels. Mirrored i
 
 **Marquee** (strip under the hero): every item from §Skills, in table order. Decorative; the Stack section lists them for real.
 
-**Wordmark in the section index** (lg+): the hero wordmark's letters fly into the top of the index; its `C` and the next `N` land as the Logo / initials `CN`, a link to `#top`.
+**Wordmark in the section index** (lg+): the hero wordmark's letters fly into the top of the index; its first word, `MARK`, lands as the Logo, a link to `#top`; the rest scatters and fades.
 
 Eyebrow numbers count only the sections actually rendered. Footer reads `© {current year} {Name (EN)}` (no extra label).
 

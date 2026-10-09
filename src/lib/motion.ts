@@ -30,7 +30,7 @@ export const revealLine = {
   } satisfies Variants,
 };
 
-// DESIGN.MD §6 hero intro, once on load: the CN mark shows alone, the name's letters rise in, then the
+// DESIGN.MD §6 hero intro, once on load: the MARK logo shows alone, the name's letters rise in, then the
 // rest of the hero fades up, `INTRO_REST` + 80ms per item. Reduced motion keeps only the fades.
 export const INTRO_MARK: MotionProps = {
   initial: { opacity: 0, scale: 0.9 },

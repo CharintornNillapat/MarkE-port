@@ -4,7 +4,7 @@ import { identity } from "@/content/site";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-// Favicon: the CN monogram, generated at build. An image can't read CSS variables, so these are the
+// Favicon: the logo's first letter (M), generated at build. An image can't read CSS variables, so these are the
 // DESIGN.MD §2 token values hard-coded: --bg #09090b, --text #f4f4f5.
 export default function Icon() {
   return new ImageResponse(
@@ -19,12 +19,12 @@ export default function Icon() {
           borderRadius: 8,
           background: "#09090b",
           color: "#f4f4f5",
-          fontSize: 16,
+          fontSize: 20,
           fontWeight: 600,
           letterSpacing: -0.5,
         }}
       >
-        {identity.initials}
+        {identity.logo[0]}
       </div>
     ),
     size,

@@ -10,9 +10,9 @@ export function Navbar() {
       <nav className="flex items-center gap-2 rounded-full border border-border bg-surface/70 p-1.5 backdrop-blur-md md:gap-4">
         <a
           href="#top"
-          className="inline-flex size-11 items-center justify-center rounded-full text-sm font-semibold tracking-tight text-text md:size-10"
+          className="inline-flex h-11 items-center justify-center rounded-full px-3 text-sm font-semibold tracking-wider text-text md:h-10"
         >
-          {identity.initials}
+          {identity.logo}
           <span className="sr-only"> {identity.name}</span>
         </a>
         <NavLinks

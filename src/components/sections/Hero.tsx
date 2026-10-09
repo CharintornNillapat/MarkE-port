@@ -56,7 +56,7 @@ export function Hero() {
             aria-hidden
             className="pointer-events-none absolute inset-0 flex items-center justify-center"
           >
-            {identity.initials}
+            {identity.logo}
           </motion.span>
           {words.map((word, w) => (
             <Fragment key={w}>
